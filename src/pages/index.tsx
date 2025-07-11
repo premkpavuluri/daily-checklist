@@ -1,115 +1,90 @@
-import Image from "next/image";
-import { Geist, Geist_Mono } from "next/font/google";
+import React, { useEffect, useState } from 'react';
+import TaskForm, { TaskFormInput } from '../components/molecules/TaskForm';
+import MatrixBoard from '../components/organisms/MatrixBoard';
+import Overview from '../components/organisms/Overview';
+import { Task, TaskState } from '../components/molecules/TaskCard';
+import Icon from '../components/atoms/Icon';
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
+// Persistence abstraction (can swap out localStorage for DB later)
+const TASKS_KEY = 'eisenhower-tasks';
+const loadTasks = (): Task[] => {
+  try {
+    const data = localStorage.getItem(TASKS_KEY);
+    return data ? JSON.parse(data) : [];
+  } catch {
+    return [];
+  }
+};
+const saveTasks = (tasks: Task[]) => {
+  localStorage.setItem(TASKS_KEY, JSON.stringify(tasks));
+};
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+const generateId = () => Math.random().toString(36).slice(2, 10);
 
-export default function Home() {
+const EisenhowerMatrixApp = () => {
+  const [tasks, setTasks] = useState<Task[]>([]);
+  const [showModal, setShowModal] = useState(false);
+
+  useEffect(() => {
+    setTasks(loadTasks());
+  }, []);
+
+  useEffect(() => {
+    saveTasks(tasks);
+  }, [tasks]);
+
+  const handleAddTask = (task: TaskFormInput) => {
+    setTasks(prev => [
+      ...prev,
+      {
+        id: generateId(),
+        title: task.title,
+        description: task.description,
+        important: task.important,
+        urgent: task.urgent,
+        deadline: task.deadline,
+        timeEstimate: task.timeEstimate,
+        state: 'created',
+      },
+    ]);
+  };
+
+  const handleTaskStateChange = (taskId: string, state: TaskState) => {
+    setTasks(prev => prev.map(t => t.id === taskId ? { ...t, state } : t));
+  };
+
+  const handleEditTask = () => {
+    // For simplicity, editing can be implemented as a modal or inline in the future
+    alert('Edit functionality coming soon!');
+  };
+
+  const handleDeleteTask = (taskId: string) => {
+    setTasks(prev => prev.filter(t => t.id !== taskId));
+  };
+
   return (
-    <div
-      className={`${geistSans.className} ${geistMono.className} grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]`}
-    >
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              src/pages/index.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+    <div style={{ minHeight: '100vh', background: '#fafbfc', padding: 24, position: 'relative' }}>
+      <button
+        className="btn btn-primary"
+        style={{ position: 'absolute', top: 32, right: 40, zIndex: 10, display: 'flex', alignItems: 'center', gap: 8, fontSize: 18 }}
+        onClick={() => setShowModal(true)}
+      >
+        <Icon name="plus" size={22} /> Add Task
+      </button>
+      <TaskForm open={showModal} onClose={() => setShowModal(false)} onSubmit={task => { handleAddTask(task); setShowModal(false); }} />
+      <h1 style={{ textAlign: 'center', margin: '16px 0 8px 0' }}>Eisenhower Matrix</h1>
+      <p style={{ textAlign: 'center', color: '#666', marginBottom: 32 }}>
+        Organize your tasks by importance and urgency
+      </p>
+      <MatrixBoard
+        tasks={tasks}
+        onTaskStateChange={handleTaskStateChange}
+        onEditTask={handleEditTask}
+        onDeleteTask={handleDeleteTask}
+      />
+      <Overview tasks={tasks} />
     </div>
   );
-}
+};
+
+export default EisenhowerMatrixApp;
