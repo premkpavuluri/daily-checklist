@@ -39,6 +39,7 @@ const MatrixLane: React.FC<MatrixLaneProps> = ({ quadrant, tasks, onTaskStateCha
         <h3 style={{ margin: 0, fontSize: 20, fontWeight: 700, color: meta.textColor }}>{meta.title}</h3>
         <div style={{ fontSize: 13, color: '#888', fontWeight: 500 }}>{meta.description}</div>
       </header>
+      <hr style={{ border: 0, borderTop: '1.5px solid #64748b', margin: '10px 16px 18px 16px' }} />
       <div style={{ flex: 1, overflowY: 'auto' }}>
         {tasks.length === 0 ? (
           <div style={{ textAlign: 'center', color: '#bbb', marginTop: 32, fontSize: 16 }}>
