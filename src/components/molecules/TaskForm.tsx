@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import Input from '../atoms/Input';
-import Radio from '../atoms/Radio';
-import Button from '../atoms/Button';
 import Icon from '../atoms/Icon';
+import Textarea from '../atoms/Textarea';
 
 export interface TaskFormInput {
   title: string;
@@ -44,39 +43,205 @@ const TaskForm: React.FC<TaskFormProps> = ({ onSubmit, open, onClose }) => {
   };
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div className="modal" onClick={e => e.stopPropagation()}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-          <h2 style={{ fontSize: 22 }}>Add New Task</h2>
-          <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4 }} aria-label="Close">
+    <div style={{
+      position: 'fixed',
+      top: 0,
+      left: 0,
+      width: '100vw',
+      height: '100vh',
+      background: 'rgba(34, 34, 59, 0.18)',
+      zIndex: 1000,
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+    }} onClick={onClose}>
+      <div style={{
+        background: '#fff',
+        borderRadius: 16,
+        boxShadow: '0 8px 32px #0002',
+        padding: '28px 32px 24px 32px',
+        minWidth: 400,
+        maxWidth: 420,
+        width: '100%',
+        position: 'relative',
+      }} onClick={e => e.stopPropagation()}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
+          <h2 style={{ fontSize: 24, fontWeight: 600, color: '#22223b', margin: 0 }}>Add New Task</h2>
+          <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4, marginRight: -8 }} aria-label="Close">
             <Icon name="close" size={24} />
           </button>
         </div>
         <form onSubmit={handleSubmit}>
-          <Input label="Task Title" value={title} onChange={e => setTitle(e.target.value)} required />
-          <Input label="Description" value={description} onChange={e => setDescription(e.target.value)} />
-          <div style={{ margin: '12px 0' }}>
-            <div style={{ fontWeight: 500, marginBottom: 4 }}>Does this contribute to your long-term goals?</div>
-            <Radio label="Yes, Important" checked={important} onChange={() => setImportant(true)} name="important" />
-            <Radio label="No, Not Important" checked={!important} onChange={() => setImportant(false)} name="important" />
-          </div>
-          <div style={{ margin: '12px 0' }}>
-            <div style={{ fontWeight: 500, marginBottom: 4 }}>Does this need immediate attention?</div>
-            <Radio label="Yes, Urgent" checked={urgent} onChange={() => setUrgent(true)} name="urgent" />
-            <Radio label="No, Can Wait" checked={!urgent} onChange={() => setUrgent(false)} name="urgent" />
-          </div>
-          {showMore && (
-            <div style={{ margin: '12px 0' }}>
-              <Input label="Deadline" type="date" value={deadline} onChange={e => setDeadline(e.target.value)} />
-              <Input label="Time Estimate (minutes)" type="number" value={timeEstimate} onChange={e => setTimeEstimate(e.target.value)} min={1} />
+          <Input label="Task Title *" value={title} onChange={e => setTitle(e.target.value)} required style={{ marginBottom: 16, fontSize: 15, fontWeight: 400 }} />
+          <Textarea label="Description" value={description} onChange={e => setDescription(e.target.value)} placeholder="Additional details..." />
+          <div style={{ margin: '20px 0 0 0' }}>
+            <div style={{ fontWeight: 500, marginBottom: 8, fontSize: 14, color: '#4b5563' }}>Does this contribute to your long-term goals?</div>
+            <div style={{
+              display: 'flex',
+              background: '#f5f6fa',
+              borderRadius: 8,
+              boxShadow: '0 1px 3px #e5e7eb, 0 1px 0 #fff inset',
+              padding: 2,
+              gap: 0,
+              marginBottom: 6,
+            }}>
+              <button type="button" onClick={() => setImportant(true)} style={{
+                flex: 1,
+                background: important ? '#fff' : 'transparent',
+                color: important ? '#2563eb' : '#6b7280',
+                border: 'none',
+                borderRadius: 6,
+                fontWeight: important ? 500 : 400,
+                fontSize: 14,
+                boxShadow: important ? '0 1px 3px #e0e7ef, 0 0 0 1px #e5e7eb' : 'none',
+                outline: 'none',
+                transition: 'background 0.15s, color 0.15s',
+                padding: '10px 12px',
+                margin: 0,
+                zIndex: important ? 2 : 1,
+              }}>Yes, Important</button>
+              <button type="button" onClick={() => setImportant(false)} style={{
+                flex: 1,
+                background: !important ? '#fff' : 'transparent',
+                color: !important ? '#2563eb' : '#6b7280',
+                border: 'none',
+                borderRadius: 6,
+                fontWeight: !important ? 500 : 400,
+                fontSize: 14,
+                boxShadow: !important ? '0 1px 3px #e0e7ef, 0 0 0 1px #e5e7eb' : 'none',
+                outline: 'none',
+                transition: 'background 0.15s, color 0.15s',
+                padding: '10px 12px',
+                margin: 0,
+                zIndex: !important ? 2 : 1,
+              }}>No, Not Important</button>
             </div>
-          )}
-          <Button type="button" variant="secondary" onClick={() => setShowMore(v => !v)}>
-            {showMore ? 'Hide Additional Options' : 'Show Additional Options'}
-          </Button>
-          <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 20 }}>
-            <Button type="button" variant="secondary" onClick={onClose}>Cancel</Button>
-            <Button type="submit">Add Task</Button>
+          </div>
+          <div style={{ margin: '16px 0 0 0' }}>
+            <div style={{ fontWeight: 500, marginBottom: 8, fontSize: 14, color: '#4b5563' }}>Does this need immediate attention?</div>
+            <div style={{
+              display: 'flex',
+              background: '#f5f6fa',
+              borderRadius: 8,
+              boxShadow: '0 1px 3px #e5e7eb, 0 1px 0 #fff inset',
+              padding: 2,
+              gap: 0,
+              marginBottom: 6,
+            }}>
+              <button type="button" onClick={() => setUrgent(true)} style={{
+                flex: 1,
+                background: urgent ? '#fff' : 'transparent',
+                color: urgent ? '#2563eb' : '#6b7280',
+                border: 'none',
+                borderRadius: 6,
+                fontWeight: urgent ? 500 : 400,
+                fontSize: 14,
+                boxShadow: urgent ? '0 1px 3px #e0e7ef, 0 0 0 1px #e5e7eb' : 'none',
+                outline: 'none',
+                transition: 'background 0.15s, color 0.15s',
+                padding: '10px 12px',
+                margin: 0,
+                zIndex: urgent ? 2 : 1,
+              }}>Yes, Urgent</button>
+              <button type="button" onClick={() => setUrgent(false)} style={{
+                flex: 1,
+                background: !urgent ? '#fff' : 'transparent',
+                color: !urgent ? '#2563eb' : '#6b7280',
+                border: 'none',
+                borderRadius: 6,
+                fontWeight: !urgent ? 500 : 400,
+                fontSize: 14,
+                boxShadow: !urgent ? '0 1px 3px #e0e7ef, 0 0 0 1px #e5e7eb' : 'none',
+                outline: 'none',
+                transition: 'background 0.15s, color 0.15s',
+                padding: '10px 12px',
+                margin: 0,
+                zIndex: !urgent ? 2 : 1,
+              }}>No, Can Wait</button>
+            </div>
+          </div>
+          <div style={{ margin: '16px 0 0 0' }}>
+            <button type="button" onClick={() => setShowMore(v => !v)} style={{
+              background: 'none',
+              border: 'none',
+              color: '#2563eb',
+              fontWeight: 500,
+              fontSize: 14,
+              display: 'flex',
+              alignItems: 'center',
+              cursor: 'pointer',
+              margin: 0,
+              padding: 0,
+              marginBottom: 2,
+              gap: 4,
+            }}>
+              <span style={{ display: 'inline-block', transform: showMore ? 'rotate(90deg)' : 'rotate(0deg)', transition: 'transform 0.2s', fontSize: 14 }}>&#9654;</span>
+              {showMore ? 'Hide Additional Options' : 'Show Additional Options'}
+            </button>
+            {showMore && (
+              <div style={{ margin: '16px 0 0 0' }}>
+                <div style={{ marginBottom: 12 }}>
+                  <Input label="Deadline" type="date" value={deadline} onChange={e => setDeadline(e.target.value)} style={{ fontSize: 14 }} />
+                </div>
+                <div>
+                  <label style={{ display: 'block', fontWeight: 500, marginBottom: 6, fontSize: 14 }}>Time Estimate</label>
+                  <select
+                    value={timeEstimate}
+                    onChange={e => setTimeEstimate(e.target.value)}
+                    style={{
+                      width: '100%',
+                      border: '1.5px solid #e5e7eb',
+                      borderRadius: 8,
+                      padding: '10px 12px',
+                      fontSize: 14,
+                      fontFamily: 'inherit',
+                      background: '#f8fafc',
+                      color: '#22223b',
+                      outline: 'none',
+                      boxSizing: 'border-box',
+                      boxShadow: '0 1px 2px #0001',
+                      marginBottom: 0,
+                    }}
+                  >
+                    <option value="">Select estimate...</option>
+                    <option value="15 minutes">15 minutes</option>
+                    <option value="30 minutes">30 minutes</option>
+                    <option value="1 hour">1 hour</option>
+                    <option value="2 hours">2 hours</option>
+                  </select>
+                </div>
+              </div>
+            )}
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'center', marginTop: 28, gap: 12 }}>
+            <button type="button" onClick={onClose} style={{
+              minWidth: 120,
+              fontSize: 15,
+              fontWeight: 500,
+              borderRadius: 8,
+              padding: '12px 20px',
+              background: '#fff',
+              color: '#4b5563',
+              border: '1.5px solid #e5e7eb',
+              boxShadow: '0 1px 2px #0001',
+              cursor: 'pointer',
+              marginRight: 0,
+              transition: 'background 0.15s, color 0.15s',
+            }}>Cancel</button>
+            <button type="submit" style={{
+              minWidth: 120,
+              fontSize: 15,
+              fontWeight: 500,
+              borderRadius: 8,
+              padding: '12px 20px',
+              background: '#2563eb',
+              color: '#fff',
+              border: 'none',
+              boxShadow: '0 2px 4px #2563eb22',
+              cursor: 'pointer',
+              marginLeft: 0,
+              transition: 'background 0.15s, color 0.15s',
+            }}>Add Task</button>
           </div>
         </form>
       </div>
