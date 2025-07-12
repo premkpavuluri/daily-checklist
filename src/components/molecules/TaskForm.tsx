@@ -54,6 +54,8 @@ const TaskForm: React.FC<TaskFormProps> = ({ onSubmit, open, onClose }) => {
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
+      backdropFilter: 'blur(6px)',
+      WebkitBackdropFilter: 'blur(6px)',
     }} onClick={onClose}>
       <div style={{
         background: '#fff',
