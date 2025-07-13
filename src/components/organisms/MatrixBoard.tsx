@@ -21,7 +21,7 @@ const quadrants: Quadrant[] = ['do-first', 'schedule', 'delegate', 'eliminate', 
 
 const MatrixBoard: React.FC<MatrixBoardProps> = ({ tasks, onTaskStateChange, onEditTask, onDeleteTask }) => {
   return (
-    <div style={{ display: 'flex', gap: 16, width: '100%', minHeight: '70vh' }}>
+    <div style={{ display: 'flex', gap: 16, width: '100%', minHeight: '70vh', overflowX: 'auto', minWidth: 0 }}>
       {quadrants.map(q => (
         <MatrixLane
           key={q}

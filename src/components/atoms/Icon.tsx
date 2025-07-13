@@ -1,7 +1,7 @@
 import React from 'react';
 
 interface IconProps {
-  name: 'edit' | 'delete' | 'done' | 'pause' | 'calendar' | 'clock' | 'plus' | 'close';
+  name: 'edit' | 'delete' | 'done' | 'pause' | 'calendar' | 'clock' | 'plus' | 'close' | 'notes' | 'eye' | 'eye-closed' | 'play';
   size?: number;
   color?: string;
 }
@@ -15,6 +15,10 @@ const icons: Record<string, React.ReactElement> = {
   clock: <svg width="1em" height="1em" viewBox="0 0 24 24"><path d="M12 8v5h5v-2h-3V8z"/><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" strokeWidth="2"/></svg>,
   plus: <svg width="1em" height="1em" viewBox="0 0 24 24"><path d="M19 13H13V19H11V13H5V11H11V5H13V11H19V13Z"/></svg>,
   close: <svg width="1em" height="1em" viewBox="0 0 24 24"><path d="M18.3 5.71a1 1 0 0 0-1.41 0L12 10.59 7.11 5.7A1 1 0 0 0 5.7 7.11L10.59 12l-4.89 4.89a1 1 0 1 0 1.41 1.41L12 13.41l4.89 4.89a1 1 0 0 0 1.41-1.41L13.41 12l4.89-4.89a1 1 0 0 0 0-1.4z"/></svg>,
+  notes: <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none"><rect x="5" y="3" width="14" height="18" rx="2" fill="#fff" stroke="currentColor" strokeWidth="1.5"/><rect x="8" y="6" width="8" height="1.5" rx="0.75" fill="#cbd5e1"/><rect x="8" y="9" width="8" height="1.5" rx="0.75" fill="#cbd5e1"/><rect x="8" y="12" width="5" height="1.5" rx="0.75" fill="#cbd5e1"/></svg>,
+  eye: <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z" stroke="currentColor" strokeWidth="1.5"/><circle cx="12" cy="12" r="3.5" stroke="currentColor" strokeWidth="1.5"/></svg>,
+  'eye-closed': <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none"><path d="M3 3l18 18M1 12s4-7 11-7c2.5 0 4.5.5 6.2 1.3M23 12s-4 7-11 7c-2.5 0-4.5-.5-6.2-1.3" stroke="currentColor" strokeWidth="1.5"/><path d="M9.5 9.5a3.5 3.5 0 0 1 5 5" stroke="currentColor" strokeWidth="1.5"/></svg>,
+  play: <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none"><polygon points="8,5 19,12 8,19" fill="currentColor"/></svg>,
 };
 
 const Icon: React.FC<IconProps> = ({ name, size = 20, color }) => (

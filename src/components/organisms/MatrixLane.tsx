@@ -11,6 +11,14 @@ const quadrantMeta: Record<Quadrant, { title: string; colorVar: string; descript
   'done': { title: 'Done', colorVar: 'var(--lane-done)', description: 'Completed Tasks', textColor: '#16a34a' },
 };
 
+const laneBgVars: Record<Quadrant, { header: string; body: string }> = {
+  'do-first': { header: '#fee2e2', body: '#fef2f2' },
+  'schedule': { header: '#dbeafe', body: '#eff6ff' },
+  'delegate': { header: '#fef9c3', body: '#fefce8' },
+  'eliminate': { header: '#e0e7ff', body: '#f8fafc' },
+  'done': { header: '#bbf7d0', body: '#f0fdf4' },
+};
+
 interface MatrixLaneProps {
   quadrant: Quadrant;
   tasks: Task[];
@@ -21,11 +29,12 @@ interface MatrixLaneProps {
 
 const MatrixLane: React.FC<MatrixLaneProps> = ({ quadrant, tasks, onTaskStateChange, onEditTask, onDeleteTask }) => {
   const meta = quadrantMeta[quadrant];
+  const laneBg = laneBgVars[quadrant];
   return (
     <section style={{
-      background: meta.colorVar,
-      borderRadius: 16,
-      padding: 18,
+      background: laneBg.body,
+      borderRadius: 10,
+      padding: 0,
       minHeight: '70vh',
       flex: 1,
       margin: 8,
@@ -34,15 +43,17 @@ const MatrixLane: React.FC<MatrixLaneProps> = ({ quadrant, tasks, onTaskStateCha
       boxShadow: '0 2px 8px #0001',
       border: '1.5px solid #e5e7eb',
       transition: 'background 0.2s',
+      overflow: 'hidden',
+      minWidth: 240,
+      maxWidth: 300,
     }}>
-      <header style={{ marginBottom: 8 }}>
+      <header style={{ marginBottom: 0, background: laneBg.header, padding: '18px 18px 10px 18px', borderTopLeftRadius: 10, borderTopRightRadius: 10 }}>
         <h3 style={{ margin: 0, fontSize: 20, fontWeight: 700, color: meta.textColor }}>{meta.title}</h3>
         <div style={{ fontSize: 13, color: '#888', fontWeight: 500 }}>{meta.description}</div>
       </header>
-      <hr style={{ border: 0, borderTop: '1.5px solid #64748b', margin: '10px 16px 18px 16px' }} />
-      <div style={{ flex: 1, overflowY: 'auto' }}>
+      <div style={{ flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', padding: '10px 10px 0 10px', gap: 12 }}>
         {tasks.length === 0 ? (
-          <div style={{ textAlign: 'center', color: '#bbb', marginTop: 32, fontSize: 16 }}>
+          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', color: '#bbb', fontSize: 16, padding: 10 }}>
             No active tasks
           </div>
         ) : (
