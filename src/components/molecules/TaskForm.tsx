@@ -217,11 +217,11 @@ const TaskForm: React.FC<TaskFormProps> = ({ onSubmit, open, onClose }) => {
           </div>
           <div style={{ display: 'flex', justifyContent: 'center', marginTop: 28, gap: 12 }}>
             <button type="button" onClick={onClose} style={{
-              minWidth: 120,
+              minWidth: '50%',
               fontSize: 15,
               fontWeight: 500,
               borderRadius: 8,
-              padding: '12px 20px',
+              padding: '12px 15px',
               background: '#fff',
               color: '#4b5563',
               border: '1.5px solid #e5e7eb',
@@ -231,11 +231,11 @@ const TaskForm: React.FC<TaskFormProps> = ({ onSubmit, open, onClose }) => {
               transition: 'background 0.15s, color 0.15s',
             }}>Cancel</button>
             <button type="submit" style={{
-              minWidth: 120,
+              minWidth: '50%',
               fontSize: 15,
               fontWeight: 500,
               borderRadius: 8,
-              padding: '12px 20px',
+              padding: '12px 15px',
               background: '#2563eb',
               color: '#fff',
               border: 'none',

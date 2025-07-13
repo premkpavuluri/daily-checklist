@@ -69,7 +69,7 @@ const EisenhowerMatrixApp = () => {
         style={{ position: 'absolute', top: 32, right: 40, zIndex: 10, display: 'flex', alignItems: 'center', gap: 8, fontSize: 18 }}
         onClick={() => setShowModal(true)}
       >
-        <Icon name="plus" size={22} /> Add Task
+        <Icon name="plus" size={22} color="#fff" /> Add Task
       </button>
       <TaskForm open={showModal} onClose={() => setShowModal(false)} onSubmit={task => { handleAddTask(task); setShowModal(false); }} />
       <h1 style={{ textAlign: 'center', margin: '16px 0 8px 0' }}>Eisenhower Matrix</h1>
