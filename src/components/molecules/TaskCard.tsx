@@ -33,15 +33,17 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, onStateChange, onEdit, onDele
           <button onClick={onDelete} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 1 }} title="Delete"><Icon name="close" size={13} color="#64748b" /></button>
         </div>
       </div>
-      {/* Show/Hide details */}
-      <div style={{ padding: '0 8px', marginTop: 2, marginBottom: 2 }}>
-        <button onClick={() => setShowDetails(d => !d)} style={{ background: 'none', border: 'none', color: '#2563eb', fontSize: 12, display: 'flex', alignItems: 'center', cursor: 'pointer', padding: 0, gap: 3 }}>
-          <Icon name={showDetails ? 'eye' : 'eye-closed'} size={13} />
-          {showDetails ? 'Hide details' : 'Show details'}
-        </button>
-      </div>
-      {/* Details */}
-      {showDetails && task.description && (
+      {/* Show/Hide details (only if description exists) */}
+      {task.description && (
+        <div style={{ padding: '0 8px', marginTop: 2, marginBottom: 2 }}>
+          <button onClick={() => setShowDetails(d => !d)} style={{ background: 'none', border: 'none', color: '#2563eb', fontSize: 12, display: 'flex', alignItems: 'center', cursor: 'pointer', padding: 0, gap: 3 }}>
+            <Icon name={showDetails ? 'eye-closed' : 'eye'} size={13} />
+            {showDetails ? 'Hide details' : 'Show details'}
+          </button>
+        </div>
+      )}
+      {/* Details (only if description exists and showDetails is true) */}
+      {task.description && showDetails && (
         <div style={{ background: '#f8fafc', borderRadius: 6, margin: '4px 8px', padding: '6px 8px', fontSize: 12, color: '#22223b' }}>
           {task.description}
         </div>
