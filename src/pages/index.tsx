@@ -63,26 +63,30 @@ const EisenhowerMatrixApp = () => {
   };
 
   return (
-    <div style={{ minHeight: '100vh', background: '#fafbfc', padding: 24, position: 'relative' }}>
-      <button
-        className="btn btn-primary"
-        style={{ position: 'absolute', top: 32, right: 40, zIndex: 10, display: 'flex', alignItems: 'center', gap: 8, fontSize: 18 }}
-        onClick={() => setShowModal(true)}
-      >
-        <Icon name="plus" size={22} color="#fff" /> Add Task
-      </button>
+    <div style={{ minHeight: '100vh', background: '#f6f8fa', padding: 0, position: 'relative' }}>
+      <div style={{ background: '#fff', padding: '32px 40px 16px 40px', boxShadow: '0 2px 8px #0001', borderBottom: '1px solid #ececec', position: 'relative' }}>
+        <button
+          className="btn btn-primary"
+          style={{ position: 'absolute', top: 32, right: 40, zIndex: 10, display: 'flex', alignItems: 'center', gap: 8, fontSize: 15, padding: '8px 18px' }}
+          onClick={() => setShowModal(true)}
+        >
+          <Icon name="plus" size={22} color="#fff" /> Add Task
+        </button>
+        <div style={{ textAlign: 'left', margin: 0, fontSize: 22, fontWeight: 800, letterSpacing: -0.5 }}>Eisenhower Matrix</div>
+        <p style={{ textAlign: 'left', color: '#666', margin: '4px 0 0 0', fontSize: 14, fontWeight: 400 }}>
+          Organize your tasks by importance and urgency
+        </p>
+      </div>
       <TaskForm open={showModal} onClose={() => setShowModal(false)} onSubmit={task => { handleAddTask(task); setShowModal(false); }} />
-      <h1 style={{ textAlign: 'center', margin: '16px 0 8px 0' }}>Eisenhower Matrix</h1>
-      <p style={{ textAlign: 'center', color: '#666', marginBottom: 32 }}>
-        Organize your tasks by importance and urgency
-      </p>
-      <MatrixBoard
-        tasks={tasks}
-        onTaskStateChange={handleTaskStateChange}
-        onEditTask={handleEditTask}
-        onDeleteTask={handleDeleteTask}
-      />
-      <Overview tasks={tasks} />
+      <div style={{ padding: 24 }}>
+        <MatrixBoard
+          tasks={tasks}
+          onTaskStateChange={handleTaskStateChange}
+          onEditTask={handleEditTask}
+          onDeleteTask={handleDeleteTask}
+        />
+        <Overview tasks={tasks} />
+      </div>
     </div>
   );
 };
