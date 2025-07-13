@@ -74,7 +74,7 @@ const TaskForm: React.FC<TaskFormProps> = ({ onSubmit, open, onClose }) => {
           </button>
         </div>
         <form onSubmit={handleSubmit}>
-          <Input label="Task Title *" value={title} onChange={e => setTitle(e.target.value)} required style={{ marginBottom: 16, fontSize: 15, fontWeight: 400 }} />
+          <Input label="Task Title *" value={title} autoFocus onChange={e => setTitle(e.target.value)} required style={{ marginBottom: 16, fontSize: 15, fontWeight: 400 }} />
           <Textarea label="Description" value={description} onChange={e => setDescription(e.target.value)} placeholder="Additional details..." />
           <div style={{ margin: '20px 0 0 0' }}>
             <div style={{ fontWeight: 500, marginBottom: 8, fontSize: 14, color: '#4b5563' }}>Does this contribute to your long-term goals?</div>

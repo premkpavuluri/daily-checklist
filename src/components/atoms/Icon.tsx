@@ -13,7 +13,7 @@ const icons: Record<string, React.ReactElement> = {
   pause: <svg width="1em" height="1em" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>,
   calendar: <svg width="1em" height="1em" viewBox="0 0 24 24"><path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11zm0-13H5V6h14v1z"/></svg>,
   clock: <svg width="1em" height="1em" viewBox="0 0 24 24"><path d="M12 8v5h5v-2h-3V8z"/><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" strokeWidth="2"/></svg>,
-  plus: <svg width="1em" height="1em" viewBox="0 0 24 24"><path d="M19 13H13V19H11V13H5V11H11V5H13V11H19V13Z"/></svg>,
+  plus: <svg width="1.2em" height="1.2em" viewBox="0 0 24 24"><path d="M19 13H13V19H11V13H5V11H11V5H13V11H19V13Z"/></svg>,
   close: <svg width="1em" height="1em" viewBox="0 0 24 24"><path d="M18.3 5.71a1 1 0 0 0-1.41 0L12 10.59 7.11 5.7A1 1 0 0 0 5.7 7.11L10.59 12l-4.89 4.89a1 1 0 1 0 1.41 1.41L12 13.41l4.89 4.89a1 1 0 0 0 1.41-1.41L13.41 12l4.89-4.89a1 1 0 0 0 0-1.4z"/></svg>,
   notes: <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none"><rect x="5" y="3" width="14" height="18" rx="2" fill="#fff" stroke="currentColor" strokeWidth="1.5"/><rect x="8" y="6" width="8" height="1.5" rx="0.75" fill="#cbd5e1"/><rect x="8" y="9" width="8" height="1.5" rx="0.75" fill="#cbd5e1"/><rect x="8" y="12" width="5" height="1.5" rx="0.75" fill="#cbd5e1"/></svg>,
   eye: <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z" stroke="currentColor" strokeWidth="1.5"/><circle cx="12" cy="12" r="3.5" stroke="currentColor" strokeWidth="1.5"/></svg>,
