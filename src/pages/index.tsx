@@ -4,22 +4,7 @@ import MatrixBoard from '../components/organisms/MatrixBoard';
 import Overview from '../components/organisms/Overview';
 import { Task, TaskState } from '../components/molecules/TaskCard';
 import Icon from '../components/atoms/Icon';
-
-// Persistence abstraction (can swap out localStorage for DB later)
-const TASKS_KEY = 'eisenhower-tasks';
-const loadTasks = (): Task[] => {
-  try {
-    const data = localStorage.getItem(TASKS_KEY);
-    return data ? JSON.parse(data) : [];
-  } catch {
-    return [];
-  }
-};
-const saveTasks = (tasks: Task[]) => {
-  localStorage.setItem(TASKS_KEY, JSON.stringify(tasks));
-};
-
-const generateId = () => Math.random().toString(36).slice(2, 10);
+import { loadTasks, saveTasks, generateId } from '../lib/persistence';
 
 const EisenhowerMatrixApp = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
