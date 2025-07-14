@@ -11,6 +11,10 @@
 - [ ] Add task search functionality
 - [ ] Add task progress tracking
 - [ ] Add task notifications
+- [ ] Ask for confirmation if we delete the task.
+- [ ] update task card on done lane:
+    - [ ] Remove Created icon
+    - [ ] show the task done date and store it in the DB
 
 ## Done
 - [x] Create basic Eisenhower Matrix layout
