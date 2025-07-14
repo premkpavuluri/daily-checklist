@@ -24,6 +24,7 @@ const generateId = () => Math.random().toString(36).slice(2, 10);
 const EisenhowerMatrixApp = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [showModal, setShowModal] = useState(false);
+  const [editTaskId, setEditTaskId] = useState<string | null>(null);
 
   useEffect(() => {
     setTasks(loadTasks());
@@ -49,18 +50,29 @@ const EisenhowerMatrixApp = () => {
     ]);
   };
 
+  const handleUpdateTask = (task: TaskFormInput) => {
+    setTasks(prev => prev.map(t =>
+      t.id === editTaskId
+        ? { ...t, ...task }
+        : t
+    ));
+  };
+
   const handleTaskStateChange = (taskId: string, state: TaskState) => {
     setTasks(prev => prev.map(t => t.id === taskId ? { ...t, state } : t));
   };
 
-  const handleEditTask = () => {
-    // For simplicity, editing can be implemented as a modal or inline in the future
-    alert('Edit functionality coming soon!');
+  const handleEditTask = (taskId: string) => {
+    setEditTaskId(taskId);
+    setShowModal(true);
   };
 
   const handleDeleteTask = (taskId: string) => {
     setTasks(prev => prev.filter(t => t.id !== taskId));
   };
+
+  const isEditing = editTaskId !== null;
+  const editingTask = isEditing ? tasks.find(t => t.id === editTaskId) : undefined;
 
   return (
     <div style={{ minHeight: '100vh', background: '#f6f8fa', padding: 0, position: 'relative' }}>
@@ -68,7 +80,7 @@ const EisenhowerMatrixApp = () => {
         <button
           className="btn btn-primary"
           style={{ position: 'absolute', top: 32, right: 40, zIndex: 10, display: 'flex', alignItems: 'center', gap: 8, fontSize: 15, padding: '8px 18px' }}
-          onClick={() => setShowModal(true)}
+          onClick={() => { setShowModal(true); setEditTaskId(null); }}
         >
           <Icon name="plus" size={22} color="#fff" /> Add Task
         </button>
@@ -77,7 +89,21 @@ const EisenhowerMatrixApp = () => {
           Organize your tasks by importance and urgency
         </p>
       </div>
-      <TaskForm open={showModal} onClose={() => setShowModal(false)} onSubmit={task => { handleAddTask(task); setShowModal(false); }} />
+      <TaskForm
+        open={showModal}
+        onClose={() => { setShowModal(false); setEditTaskId(null); }}
+        onSubmit={isEditing ? (task => { handleUpdateTask(task); setShowModal(false); setEditTaskId(null); }) : (task => { handleAddTask(task); setShowModal(false); })}
+        initialValues={isEditing && editingTask ? {
+          title: editingTask.title,
+          description: editingTask.description,
+          important: editingTask.important,
+          urgent: editingTask.urgent,
+          deadline: editingTask.deadline,
+          timeEstimate: editingTask.timeEstimate,
+        } : undefined}
+        headerText={isEditing ? 'Edit Task' : 'Add New Task'}
+        submitButtonText={isEditing ? 'Update Task' : 'Add Task'}
+      />
       <div style={{ padding: 24 }}>
         <MatrixBoard
           tasks={tasks}

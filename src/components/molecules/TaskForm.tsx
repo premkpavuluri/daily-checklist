@@ -16,16 +16,37 @@ interface TaskFormProps {
   onSubmit: (task: TaskFormInput) => void;
   open: boolean;
   onClose: () => void;
+  initialValues?: TaskFormInput;
+  headerText?: string;
+  submitButtonText?: string;
 }
 
-const TaskForm: React.FC<TaskFormProps> = ({ onSubmit, open, onClose }) => {
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
-  const [important, setImportant] = useState(true);
-  const [urgent, setUrgent] = useState(false);
+const TaskForm: React.FC<TaskFormProps> = ({ onSubmit, open, onClose, initialValues, headerText = 'Add New Task', submitButtonText = 'Add Task' }) => {
+  const [title, setTitle] = useState(initialValues?.title || '');
+  const [description, setDescription] = useState(initialValues?.description || '');
+  const [important, setImportant] = useState(initialValues?.important ?? true);
+  const [urgent, setUrgent] = useState(initialValues?.urgent ?? false);
   const [showMore, setShowMore] = useState(false);
-  const [deadline, setDeadline] = useState('');
-  const [timeEstimate, setTimeEstimate] = useState('');
+  const [deadline, setDeadline] = useState(initialValues?.deadline || '');
+  const [timeEstimate, setTimeEstimate] = useState(initialValues?.timeEstimate || '');
+
+  React.useEffect(() => {
+    if (open && initialValues) {
+      setTitle(initialValues.title || '');
+      setDescription(initialValues.description || '');
+      setImportant(initialValues.important ?? true);
+      setUrgent(initialValues.urgent ?? false);
+      setDeadline(initialValues.deadline || '');
+      setTimeEstimate(initialValues.timeEstimate || '');
+    } else if (open && !initialValues) {
+      setTitle('');
+      setDescription('');
+      setImportant(true);
+      setUrgent(false);
+      setDeadline('');
+      setTimeEstimate('');
+    }
+  }, [open, initialValues]);
 
   if (!open) return null;
 
@@ -68,7 +89,7 @@ const TaskForm: React.FC<TaskFormProps> = ({ onSubmit, open, onClose }) => {
         position: 'relative',
       }} onClick={e => e.stopPropagation()}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
-          <h2 style={{ fontSize: 24, fontWeight: 600, color: '#22223b', margin: 0 }}>Add New Task</h2>
+          <h2 style={{ fontSize: 24, fontWeight: 600, color: '#22223b', margin: 0 }}>{headerText}</h2>
           <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4, marginRight: -8 }} aria-label="Close">
             <Icon name="close" size={24} />
           </button>
@@ -243,7 +264,7 @@ const TaskForm: React.FC<TaskFormProps> = ({ onSubmit, open, onClose }) => {
               cursor: 'pointer',
               marginLeft: 0,
               transition: 'background 0.15s, color 0.15s',
-            }}>Add Task</button>
+            }}>{submitButtonText}</button>
           </div>
         </form>
       </div>
