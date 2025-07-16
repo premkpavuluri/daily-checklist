@@ -51,7 +51,7 @@ const MatrixLane: React.FC<MatrixLaneProps> = ({ quadrant, tasks, onTaskStateCha
         <h3 style={{ margin: 0, fontSize: 20, fontWeight: 700, color: meta.textColor }}>{meta.title}</h3>
         <div style={{ fontSize: 13, color: '#888', fontWeight: 500 }}>{meta.description}</div>
       </header>
-      <div style={{ flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', padding: '10px 10px 0 10px', gap: 12 }}>
+      <div style={{ flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', padding: '10px 10px', gap: 12 }}>
         {tasks.length === 0 ? (
           <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', color: '#bbb', fontSize: 16, padding: 10 }}>
             No active tasks

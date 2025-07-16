@@ -9,6 +9,7 @@ const Overview: React.FC<OverviewProps> = ({ tasks }) => {
   const total = tasks.length;
   const completed = tasks.filter(t => t.state === 'done').length;
   const inProgress = tasks.filter(t => t.state === 'in-progress').length;
+  const wip = tasks.filter(t => t.state === 'wip').length;
   const critical = tasks.filter(t => t.important && t.urgent && t.state !== 'done').length;
 
   return (
@@ -24,6 +25,10 @@ const Overview: React.FC<OverviewProps> = ({ tasks }) => {
       <div style={{ textAlign: 'center' }}>
         <div style={{ fontSize: 24, color: '#f59e42' }}>{inProgress}</div>
         <div>In Progress</div>
+      </div>
+      <div style={{ textAlign: 'center' }}>
+        <div style={{ fontSize: 24, color: '#f59e0a' }}>{wip}</div>
+        <div>WIP</div>
       </div>
       <div style={{ textAlign: 'center' }}>
         <div style={{ fontSize: 24, color: '#ef4444' }}>{critical}</div>

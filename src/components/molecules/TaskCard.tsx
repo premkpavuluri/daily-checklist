@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Icon from '../atoms/Icon';
 import { formatDate, isOverdue, formatCompletionDate } from '../../lib/dateUtils';
 
-export type TaskState = 'created' | 'in-progress' | 'done';
+export type TaskState = 'created' | 'in-progress' | 'wip' | 'done';
 
 export interface Task {
   id: string;
@@ -115,8 +115,8 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, onStateChange, onEdit, onDele
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 8px 8px 8px', marginTop: 2, marginBottom: 0, flexWrap: 'wrap', gap: 4 }}>
         {task.state !== 'done' && (
           <span style={{ display: 'inline-flex', alignItems: 'center', background: '#f3f4f6', color: '#64748b', borderRadius: 12, fontSize: 11, fontWeight: 500, padding: '2px 8px', gap: 4 }}>
-            <Icon name={task.state === 'in-progress' ? 'play' : 'clock'} size={11} color={task.state === 'in-progress' ? '#2563eb' : '#64748b'} />
-            {task.state === 'in-progress' ? 'In progress' : 'Created'}
+            <Icon name={task.state === 'in-progress' ? 'play' : task.state === 'wip' ? 'pause' : 'clock'} size={11} color={task.state === 'in-progress' ? '#2563eb' : task.state === 'wip' ? '#f59e0a' : '#64748b'} />
+            {task.state === 'in-progress' ? 'In progress' : task.state === 'wip' ? 'WIP' : 'Created'}
           </span>
         )}
         <div style={{ display: 'flex', gap: 4 }}>
@@ -124,7 +124,10 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, onStateChange, onEdit, onDele
             <button onClick={() => onStateChange('in-progress')} style={{ background: '#2563eb', color: '#fff', border: 'none', borderRadius: 6, fontWeight: 500, fontSize: 11, padding: '3px 10px', cursor: 'pointer' }}>Start</button>
           )}
           {task.state === 'in-progress' && (
-            <button onClick={() => onStateChange('created')} style={{ background: '#dbeafe', color: '#2563eb', border: 'none', borderRadius: 6, fontWeight: 500, fontSize: 11, padding: '3px 10px', cursor: 'pointer' }}>Pause</button>
+            <button onClick={() => onStateChange('wip')} style={{ background: '#dbeafe', color: '#2563eb', border: 'none', borderRadius: 6, fontWeight: 500, fontSize: 11, padding: '3px 10px', cursor: 'pointer' }}>Pause</button>
+          )}
+          {task.state === 'wip' && (
+            <button onClick={() => onStateChange('in-progress')} style={{ background: '#2563eb', color: '#fff', border: 'none', borderRadius: 6, fontWeight: 500, fontSize: 11, padding: '3px 10px', cursor: 'pointer' }}>Resume</button>
           )}
           {task.state !== 'done' && (
             <button onClick={() => onStateChange('done')} style={{ background: '#22c55e', color: '#fff', border: 'none', borderRadius: 6, fontWeight: 500, fontSize: 11, padding: '3px 10px', cursor: 'pointer' }}>Done</button>
