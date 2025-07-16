@@ -12,6 +12,7 @@ export interface Task {
   state: TaskState;
   important: boolean;
   urgent: boolean;
+  completedAt?: string;
 }
 
 interface TaskCardProps {
@@ -50,6 +51,26 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, onStateChange, onEdit, onDele
     const today = new Date();
     today.setHours(23, 59, 59, 999); // End of today
     return deadline < today;
+  };
+
+  // Helper function to format completion date
+  const formatCompletionDate = (dateString: string) => {
+    const date = new Date(dateString);
+    const today = new Date();
+    const yesterday = new Date(today);
+    yesterday.setDate(yesterday.getDate() - 1);
+    
+    if (date.toDateString() === today.toDateString()) {
+      return 'Completed today';
+    } else if (date.toDateString() === yesterday.toDateString()) {
+      return 'Completed yesterday';
+    } else {
+      return `Completed on ${date.toLocaleDateString('en-US', { 
+        month: 'short', 
+        day: 'numeric',
+        year: date.getFullYear() !== today.getFullYear() ? 'numeric' : undefined
+      })}`;
+    }
   };
 
   return (
@@ -113,6 +134,26 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, onStateChange, onEdit, onDele
               {task.timeEstimate}
             </span>
           )}
+        </div>
+      )}
+      {/* Completion date for done tasks */}
+      {task.state === 'done' && task.completedAt && (
+        <div style={{ padding: '4px 8px', display: 'flex', alignItems: 'center' }}>
+          <span style={{ 
+            display: 'inline-flex', 
+            alignItems: 'center', 
+            background: '#f0fdf4', 
+            color: '#16a34a', 
+            borderRadius: 12, 
+            fontSize: 11, 
+            fontWeight: 500, 
+            padding: '2px 8px', 
+            gap: 4,
+            border: '1px solid #bbf7d0'
+          }}>
+            <Icon name="done" size={11} color="#16a34a" />
+            {formatCompletionDate(task.completedAt)}
+          </span>
         </div>
       )}
       {/* Meta info and Actions on same line */}

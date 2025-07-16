@@ -10,6 +10,7 @@ export interface TaskFormInput {
   urgent: boolean;
   deadline?: string;
   timeEstimate?: string;
+  completedAt?: string;
 }
 
 interface TaskFormProps {

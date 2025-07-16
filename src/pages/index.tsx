@@ -30,21 +30,38 @@ const EisenhowerMatrixApp = () => {
         urgent: task.urgent,
         deadline: task.deadline,
         timeEstimate: task.timeEstimate,
+        completedAt: task.completedAt,
         state: 'created',
       },
     ]);
   };
 
   const handleUpdateTask = (task: TaskFormInput) => {
-    setTasks(prev => prev.map(t =>
-      t.id === editTaskId
-        ? { ...t, ...task }
-        : t
-    ));
+    setTasks(prev => prev.map(t => {
+      if (t.id === editTaskId) {
+        const updatedTask = { ...t, ...task };
+        // Preserve completion date if task is already done
+        if (t.state === 'done' && t.completedAt && !task.completedAt) {
+          updatedTask.completedAt = t.completedAt;
+        }
+        return updatedTask;
+      }
+      return t;
+    }));
   };
 
   const handleTaskStateChange = (taskId: string, state: TaskState) => {
-    setTasks(prev => prev.map(t => t.id === taskId ? { ...t, state } : t));
+    setTasks(prev => prev.map(t => {
+      if (t.id === taskId) {
+        const updatedTask = { ...t, state };
+        // Set completion date when task is marked as done
+        if (state === 'done' && !t.completedAt) {
+          updatedTask.completedAt = new Date().toISOString();
+        }
+        return updatedTask;
+      }
+      return t;
+    }));
   };
 
   const handleEditTask = (taskId: string) => {
@@ -85,6 +102,7 @@ const EisenhowerMatrixApp = () => {
           urgent: editingTask.urgent,
           deadline: editingTask.deadline,
           timeEstimate: editingTask.timeEstimate,
+          completedAt: editingTask.completedAt,
         } : undefined}
         headerText={isEditing ? 'Edit Task' : 'Add New Task'}
         submitButtonText={isEditing ? 'Update Task' : 'Add Task'}
