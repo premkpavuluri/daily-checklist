@@ -14,6 +14,14 @@
 - [ ] Ask for confirmation if we delete the task.
 - [ ] refactor task card:
     - [ ] show due date, estimated time
+    - [ ] Show time remaining until deadline
+    - [ ] Show task creation date
+    - [ ] Add task completion percentage
+    - [ ] Add subtasks checklist
+    - [ ] Add indicator for priority
+    - [ ] Add task comments/notes section
+    - [ ] Add task labels/tags display
+    - [ ] Enhance the show details section with proper markup.
 - [ ] update task card on done lane:
     - [ ] Remove Created icon
     - [ ] show the task done date and store it in the DB
