@@ -1,5 +1,21 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/pages/api-reference/create-next-app).
 
+## Features
+
+- **Eisenhower Matrix**: Organize tasks by importance and urgency
+- **Timezone Support**: Automatic timezone detection with fallback to Indian timezone (Asia/Kolkata)
+- **Date Formatting**: Localized date display with "Today", "Tomorrow", and relative dates
+- **Task Management**: Create, edit, delete, and track task completion
+- **Persistent Storage**: Tasks are saved locally in the browser
+
+## Timezone Handling
+
+The app automatically detects the user's browser timezone and formats all dates accordingly. If the browser timezone cannot be detected, it defaults to Indian timezone (Asia/Kolkata). All date operations are timezone-aware:
+
+- Task deadlines are displayed in the user's local timezone
+- Completion dates are formatted with timezone consideration
+- Date inputs are properly converted between local timezone and UTC for storage
+
 ## Getting Started
 
 First, run the development server:

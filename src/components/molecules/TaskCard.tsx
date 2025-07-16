@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import Icon from '../atoms/Icon';
+import { formatDate, isOverdue, formatCompletionDate } from '../../lib/dateUtils';
 
 export type TaskState = 'created' | 'in-progress' | 'done';
 
@@ -25,53 +26,7 @@ interface TaskCardProps {
 const TaskCard: React.FC<TaskCardProps> = ({ task, onStateChange, onEdit, onDelete }) => {
   const [showDetails, setShowDetails] = useState(false);
 
-  // Helper function to format date
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    const today = new Date();
-    const tomorrow = new Date(today);
-    tomorrow.setDate(tomorrow.getDate() + 1);
-    
-    if (date.toDateString() === today.toDateString()) {
-      return 'Today';
-    } else if (date.toDateString() === tomorrow.toDateString()) {
-      return 'Tomorrow';
-    } else {
-      return date.toLocaleDateString('en-US', { 
-        month: 'short', 
-        day: 'numeric',
-        year: date.getFullYear() !== today.getFullYear() ? 'numeric' : undefined
-      });
-    }
-  };
 
-  // Helper function to check if deadline is overdue
-  const isOverdue = (dateString: string) => {
-    const deadline = new Date(dateString);
-    const today = new Date();
-    today.setHours(23, 59, 59, 999); // End of today
-    return deadline < today;
-  };
-
-  // Helper function to format completion date
-  const formatCompletionDate = (dateString: string) => {
-    const date = new Date(dateString);
-    const today = new Date();
-    const yesterday = new Date(today);
-    yesterday.setDate(yesterday.getDate() - 1);
-    
-    if (date.toDateString() === today.toDateString()) {
-      return 'Completed today';
-    } else if (date.toDateString() === yesterday.toDateString()) {
-      return 'Completed yesterday';
-    } else {
-      return `Completed on ${date.toLocaleDateString('en-US', { 
-        month: 'short', 
-        day: 'numeric',
-        year: date.getFullYear() !== today.getFullYear() ? 'numeric' : undefined
-      })}`;
-    }
-  };
 
   return (
     <div className="task-card" style={{ border: '1px solid #eee', borderRadius: 8, padding: 0, marginBottom: 0, background: '#fff', boxShadow: '0 2px 8px #0001', minHeight: 0, fontSize: 13, width: '100%' }}>

@@ -24,7 +24,7 @@
     - [ ] Enhance the show details section with proper markup.
 - [ ] update task card on done lane:
     - [x] Remove Created icon, due date
-    - [ ] show the task done date and store it in the state as well
+    - [x] show the task done date and store it in the state as well
     - [ ] Do not show question if task is done(not needed)
 
 

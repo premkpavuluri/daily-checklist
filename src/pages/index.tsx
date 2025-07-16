@@ -5,6 +5,7 @@ import Overview from '../components/organisms/Overview';
 import { Task, TaskState } from '../components/molecules/TaskCard';
 import Icon from '../components/atoms/Icon';
 import { loadTasks, saveTasks, generateId } from '../lib/persistence';
+import { getCurrentDateISO } from '../lib/dateUtils';
 
 const EisenhowerMatrixApp = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -56,7 +57,7 @@ const EisenhowerMatrixApp = () => {
         const updatedTask = { ...t, state };
         // Set completion date when task is marked as done
         if (state === 'done' && !t.completedAt) {
-          updatedTask.completedAt = new Date().toISOString();
+          updatedTask.completedAt = getCurrentDateISO();
         }
         return updatedTask;
       }

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import Input from '../atoms/Input';
 import Icon from '../atoms/Icon';
 import Textarea from '../atoms/Textarea';
+import { formatDateForInput, parseDateFromInput } from '../../lib/dateUtils';
 
 export interface TaskFormInput {
   title: string;
@@ -28,7 +29,7 @@ const TaskForm: React.FC<TaskFormProps> = ({ onSubmit, open, onClose, initialVal
   const [important, setImportant] = useState(initialValues?.important ?? true);
   const [urgent, setUrgent] = useState(initialValues?.urgent ?? false);
   const [showMore, setShowMore] = useState(false);
-  const [deadline, setDeadline] = useState(initialValues?.deadline || '');
+  const [deadline, setDeadline] = useState(initialValues?.deadline ? formatDateForInput(initialValues.deadline) : '');
   const [timeEstimate, setTimeEstimate] = useState(initialValues?.timeEstimate || '');
 
   React.useEffect(() => {
@@ -37,7 +38,7 @@ const TaskForm: React.FC<TaskFormProps> = ({ onSubmit, open, onClose, initialVal
       setDescription(initialValues.description || '');
       setImportant(initialValues.important ?? true);
       setUrgent(initialValues.urgent ?? false);
-      setDeadline(initialValues.deadline || '');
+      setDeadline(initialValues.deadline ? formatDateForInput(initialValues.deadline) : '');
       setTimeEstimate(initialValues.timeEstimate || '');
     } else if (open && !initialValues) {
       setTitle('');
@@ -53,7 +54,14 @@ const TaskForm: React.FC<TaskFormProps> = ({ onSubmit, open, onClose, initialVal
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit({ title, description, important, urgent, deadline, timeEstimate });
+    onSubmit({ 
+      title, 
+      description, 
+      important, 
+      urgent, 
+      deadline: deadline ? parseDateFromInput(deadline) : undefined, 
+      timeEstimate 
+    });
     setTitle('');
     setDescription('');
     setImportant(true);
