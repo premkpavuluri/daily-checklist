@@ -23,6 +23,35 @@ interface TaskCardProps {
 
 const TaskCard: React.FC<TaskCardProps> = ({ task, onStateChange, onEdit, onDelete }) => {
   const [showDetails, setShowDetails] = useState(false);
+
+  // Helper function to format date
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    const today = new Date();
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    
+    if (date.toDateString() === today.toDateString()) {
+      return 'Today';
+    } else if (date.toDateString() === tomorrow.toDateString()) {
+      return 'Tomorrow';
+    } else {
+      return date.toLocaleDateString('en-US', { 
+        month: 'short', 
+        day: 'numeric',
+        year: date.getFullYear() !== today.getFullYear() ? 'numeric' : undefined
+      });
+    }
+  };
+
+  // Helper function to check if deadline is overdue
+  const isOverdue = (dateString: string) => {
+    const deadline = new Date(dateString);
+    const today = new Date();
+    today.setHours(23, 59, 59, 999); // End of today
+    return deadline < today;
+  };
+
   return (
     <div className="task-card" style={{ border: '1px solid #eee', borderRadius: 8, padding: 0, marginBottom: 0, background: '#fff', boxShadow: '0 2px 8px #0001', minHeight: 0, fontSize: 13, width: '100%' }}>
       {/* Header */}
@@ -48,12 +77,52 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, onStateChange, onEdit, onDele
           {task.description}
         </div>
       )}
+      {/* Due date and time estimate */}
+      {(task.deadline || task.timeEstimate) && (
+        <div style={{ padding: '4px 8px', display: 'flex', flexWrap: 'wrap', gap: 6, alignItems: 'center' }}>
+          {task.deadline && task.state !== 'done' && (
+            <span style={{ 
+              display: 'inline-flex', 
+              alignItems: 'center', 
+              background: isOverdue(task.deadline) ? '#fef2f2' : '#f0f9ff', 
+              color: isOverdue(task.deadline) ? '#dc2626' : '#0369a1', 
+              borderRadius: 12, 
+              fontSize: 11, 
+              fontWeight: 500, 
+              padding: '2px 8px', 
+              gap: 4,
+              border: isOverdue(task.deadline) ? '1px solid #fecaca' : '1px solid #bae6fd'
+            }}>
+              <Icon name="calendar" size={11} color={isOverdue(task.deadline) ? '#dc2626' : '#0369a1'} />
+              {isOverdue(task.deadline) ? 'Overdue' : formatDate(task.deadline)}
+            </span>
+          )}
+          {task.timeEstimate && (
+            <span style={{ 
+              display: 'inline-flex', 
+              alignItems: 'center', 
+              background: '#f3f4f6', 
+              color: '#64748b', 
+              borderRadius: 12, 
+              fontSize: 11, 
+              fontWeight: 500, 
+              padding: '2px 8px', 
+              gap: 4 
+            }}>
+              <Icon name="clock" size={11} color="#64748b" />
+              {task.timeEstimate}
+            </span>
+          )}
+        </div>
+      )}
       {/* Meta info and Actions on same line */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 8px 8px 8px', marginTop: 2, marginBottom: 0, flexWrap: 'wrap', gap: 4 }}>
-        <span style={{ display: 'inline-flex', alignItems: 'center', background: '#f3f4f6', color: '#64748b', borderRadius: 12, fontSize: 11, fontWeight: 500, padding: '2px 8px', gap: 4 }}>
-          <Icon name={task.state === 'in-progress' ? 'play' : 'clock'} size={11} color={task.state === 'in-progress' ? '#2563eb' : '#64748b'} />
-          {task.state === 'in-progress' ? 'In progress' : 'Created'}
-        </span>
+        {task.state !== 'done' && (
+          <span style={{ display: 'inline-flex', alignItems: 'center', background: '#f3f4f6', color: '#64748b', borderRadius: 12, fontSize: 11, fontWeight: 500, padding: '2px 8px', gap: 4 }}>
+            <Icon name={task.state === 'in-progress' ? 'play' : 'clock'} size={11} color={task.state === 'in-progress' ? '#2563eb' : '#64748b'} />
+            {task.state === 'in-progress' ? 'In progress' : 'Created'}
+          </span>
+        )}
         <div style={{ display: 'flex', gap: 4 }}>
           {task.state === 'created' && (
             <button onClick={() => onStateChange('in-progress')} style={{ background: '#2563eb', color: '#fff', border: 'none', borderRadius: 6, fontWeight: 500, fontSize: 11, padding: '3px 10px', cursor: 'pointer' }}>Start</button>
