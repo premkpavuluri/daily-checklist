@@ -4,6 +4,7 @@ import MatrixBoard from '../components/organisms/MatrixBoard';
 import Overview from '../components/organisms/Overview';
 import { Task, TaskState } from '../components/molecules/TaskCard';
 import Icon from '../components/atoms/Icon';
+import ConfirmationDialog from '../components/molecules/ConfirmationDialog';
 import { loadTasks, saveTasks, generateId } from '../lib/persistence';
 import { getCurrentDateISO } from '../lib/dateUtils';
 
@@ -11,6 +12,8 @@ const EisenhowerMatrixApp = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [showModal, setShowModal] = useState(false);
   const [editTaskId, setEditTaskId] = useState<string | null>(null);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [taskToDelete, setTaskToDelete] = useState<string | null>(null);
 
   useEffect(() => {
     setTasks(loadTasks());
@@ -71,7 +74,15 @@ const EisenhowerMatrixApp = () => {
   };
 
   const handleDeleteTask = (taskId: string) => {
-    setTasks(prev => prev.filter(t => t.id !== taskId));
+    setTaskToDelete(taskId);
+    setShowDeleteConfirm(true);
+  };
+
+  const confirmDeleteTask = () => {
+    if (taskToDelete) {
+      setTasks(prev => prev.filter(t => t.id !== taskToDelete));
+      setTaskToDelete(null);
+    }
   };
 
   const isEditing = editTaskId !== null;
@@ -107,6 +118,15 @@ const EisenhowerMatrixApp = () => {
         } : undefined}
         headerText={isEditing ? 'Edit Task' : 'Add New Task'}
         submitButtonText={isEditing ? 'Update Task' : 'Add Task'}
+      />
+      <ConfirmationDialog
+        open={showDeleteConfirm}
+        onClose={() => { setShowDeleteConfirm(false); setTaskToDelete(null); }}
+        onConfirm={confirmDeleteTask}
+        title="Delete Task"
+        message="Are you sure? This cannot be undone."
+        confirmText="Delete"
+        cancelText="Cancel"
       />
       <div style={{ padding: 24 }}>
         <MatrixBoard
