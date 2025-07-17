@@ -11,7 +11,6 @@
 - [ ] Add task search functionality
 - [ ] Add task progress tracking
 - [ ] Add task notifications
-- [ ] Ask for confirmation if we delete the task.
 - [ ] refactor task card:
     - [x] show due date, estimated time
     - [x] Show time remaining until deadline
@@ -26,9 +25,13 @@
     - [x] Remove Created icon, due date
     - [x] show the task done date and store it in the state as well
     - [ ] Do not show question if task is done(not needed)
+- [ ] Change theme: dark/light
+- [ ] Statistics Dashboard: More detailed analytics and productivity insights
+
 
 
 ## Done
+- [x] Ask for confirmation if we delete the task.
 - [x] Create basic Eisenhower Matrix layout
 - [x] Implement task creation
 - [x] Add task deletion
