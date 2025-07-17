@@ -1,7 +1,7 @@
 import React from 'react';
 
 interface IconProps {
-  name: 'edit' | 'delete' | 'done' | 'pause' | 'calendar' | 'clock' | 'plus' | 'close' | 'notes' | 'eye' | 'eye-closed' | 'play';
+  name: 'edit' | 'delete' | 'done' | 'pause' | 'calendar' | 'clock' | 'plus' | 'close' | 'notes' | 'eye' | 'eye-closed' | 'play' | 'filter';
   size?: number;
   color?: string;
 }
@@ -19,6 +19,7 @@ const icons: Record<string, React.ReactElement> = {
   eye: <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z" stroke="currentColor" strokeWidth="1.5"/><circle cx="12" cy="12" r="3.5" stroke="currentColor" strokeWidth="1.5"/></svg>,
   'eye-closed': <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none"><path d="M3 3l18 18M1 12s4-7 11-7c2.5 0 4.5.5 6.2 1.3M23 12s-4 7-11 7c-2.5 0-4.5-.5-6.2-1.3" stroke="currentColor" strokeWidth="1.5"/><path d="M9.5 9.5a3.5 3.5 0 0 1 5 5" stroke="currentColor" strokeWidth="1.5"/></svg>,
   play: <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none"><polygon points="8,5 19,12 8,19" fill="currentColor"/></svg>,
+  filter: <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none"><path d="M3 4a1 1 0 0 1 1-1h16a1 1 0 0 1 1 1v2.586a1 1 0 0 1-.293.707l-6.414 6.414a1 1 0 0 0-.293.707V17l-4 4v-6.586a1 1 0 0 0-.293-.707L3.293 6.293A1 1 0 0 1 3 5.586V4z" stroke="currentColor" strokeWidth="1.5"/></svg>,
 };
 
 const Icon: React.FC<IconProps> = ({ name, size = 20, color }) => (

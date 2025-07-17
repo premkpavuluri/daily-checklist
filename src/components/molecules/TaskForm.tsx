@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import Input from '../atoms/Input';
 import Icon from '../atoms/Icon';
 import Textarea from '../atoms/Textarea';
+import TagInput from '../atoms/TagInput';
 import { formatDateForInput, parseDateFromInput } from '../../lib/dateUtils';
 
 export interface TaskFormInput {
@@ -12,6 +13,7 @@ export interface TaskFormInput {
   deadline?: string;
   timeEstimate?: string;
   completedAt?: string;
+  tags?: string[];
 }
 
 interface TaskFormProps {
@@ -21,9 +23,10 @@ interface TaskFormProps {
   initialValues?: TaskFormInput;
   headerText?: string;
   submitButtonText?: string;
+  existingTags?: string[];
 }
 
-const TaskForm: React.FC<TaskFormProps> = ({ onSubmit, open, onClose, initialValues, headerText = 'Add New Task', submitButtonText = 'Add Task' }) => {
+const TaskForm: React.FC<TaskFormProps> = ({ onSubmit, open, onClose, initialValues, headerText = 'Add New Task', submitButtonText = 'Add Task', existingTags = [] }) => {
   const [title, setTitle] = useState(initialValues?.title || '');
   const [description, setDescription] = useState(initialValues?.description || '');
   const [important, setImportant] = useState(initialValues?.important ?? true);
@@ -31,6 +34,7 @@ const TaskForm: React.FC<TaskFormProps> = ({ onSubmit, open, onClose, initialVal
   const [showMore, setShowMore] = useState(false);
   const [deadline, setDeadline] = useState(initialValues?.deadline ? formatDateForInput(initialValues.deadline) : '');
   const [timeEstimate, setTimeEstimate] = useState(initialValues?.timeEstimate || '');
+  const [tags, setTags] = useState<string[]>(initialValues?.tags || []);
 
   React.useEffect(() => {
     if (open && initialValues) {
@@ -40,6 +44,7 @@ const TaskForm: React.FC<TaskFormProps> = ({ onSubmit, open, onClose, initialVal
       setUrgent(initialValues.urgent ?? false);
       setDeadline(initialValues.deadline ? formatDateForInput(initialValues.deadline) : '');
       setTimeEstimate(initialValues.timeEstimate || '');
+      setTags(initialValues.tags || []);
     } else if (open && !initialValues) {
       setTitle('');
       setDescription('');
@@ -47,6 +52,7 @@ const TaskForm: React.FC<TaskFormProps> = ({ onSubmit, open, onClose, initialVal
       setUrgent(false);
       setDeadline('');
       setTimeEstimate('');
+      setTags([]);
     }
   }, [open, initialValues]);
 
@@ -76,7 +82,8 @@ const TaskForm: React.FC<TaskFormProps> = ({ onSubmit, open, onClose, initialVal
       important, 
       urgent, 
       deadline: deadline ? parseDateFromInput(deadline) : undefined, 
-      timeEstimate 
+      timeEstimate,
+      tags
     });
     setTitle('');
     setDescription('');
@@ -84,6 +91,7 @@ const TaskForm: React.FC<TaskFormProps> = ({ onSubmit, open, onClose, initialVal
     setUrgent(false);
     setDeadline('');
     setTimeEstimate('');
+    setTags([]);
     setShowMore(false);
     onClose();
   };
@@ -122,6 +130,16 @@ const TaskForm: React.FC<TaskFormProps> = ({ onSubmit, open, onClose, initialVal
         <form onSubmit={handleSubmit}>
           <Input label="Task Title *" value={title} autoFocus onChange={e => setTitle(e.target.value)} required style={{ marginBottom: 16, fontSize: 15, fontWeight: 400 }} />
           <Textarea label="Description" value={description} onChange={e => setDescription(e.target.value)} placeholder="Additional details..." />
+          <div style={{ margin: '16px 0 0 0' }}>
+            <label style={{ display: 'block', fontWeight: 500, marginBottom: 8, fontSize: 14, color: '#4b5563' }}>Tags</label>
+            <TagInput 
+              value={tags} 
+              onChange={setTags} 
+              existingTags={existingTags} 
+              placeholder="Add tags..." 
+              style={{ marginBottom: 0 }}
+            />
+          </div>
           <div style={{ margin: '20px 0 0 0' }}>
             <div style={{ fontWeight: 500, marginBottom: 8, fontSize: 14, color: '#4b5563' }}>Does this contribute to your long-term goals?</div>
             <div style={{

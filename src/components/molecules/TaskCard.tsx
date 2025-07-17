@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Icon from '../atoms/Icon';
 import { formatDate, isOverdue, formatCompletionDate } from '../../lib/dateUtils';
+import { getTagColor } from '../../lib/tagUtils';
 
 export type TaskState = 'created' | 'in-progress' | 'wip' | 'done';
 
@@ -14,6 +15,7 @@ export interface Task {
   important: boolean;
   urgent: boolean;
   completedAt?: string;
+  tags?: string[];
 }
 
 interface TaskCardProps {
@@ -53,8 +55,8 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, onStateChange, onEdit, onDele
           {task.description}
         </div>
       )}
-      {/* Due date and time estimate */}
-      {(task.deadline || task.timeEstimate) && (
+      {/* Due date, time estimate, and tags */}
+      {(task.deadline || task.timeEstimate || (task.tags && task.tags.length > 0)) && (
         <div style={{ padding: '4px 8px', display: 'flex', flexWrap: 'wrap', gap: 6, alignItems: 'center' }}>
           {task.deadline && task.state !== 'done' && (
             <span style={{ 
@@ -89,6 +91,27 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, onStateChange, onEdit, onDele
               {task.timeEstimate}
             </span>
           )}
+          {task.tags && task.tags.map((tag, index) => {
+            const color = getTagColor(tag);
+            return (
+              <span
+                key={index}
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  background: color.bg,
+                  color: color.text,
+                  borderRadius: 12,
+                  fontSize: 11,
+                  fontWeight: 500,
+                  padding: '2px 8px',
+                  border: `1px solid ${color.border}`,
+                }}
+              >
+                {tag}
+              </span>
+            );
+          })}
         </div>
       )}
       {/* Completion date for done tasks */}

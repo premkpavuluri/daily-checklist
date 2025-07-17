@@ -5,8 +5,10 @@ import Overview from '../components/organisms/Overview';
 import { Task, TaskState } from '../components/molecules/TaskCard';
 import Icon from '../components/atoms/Icon';
 import ConfirmationDialog from '../components/molecules/ConfirmationDialog';
+import TagFilterDropdown from '../components/molecules/TagFilterDropdown';
 import { loadTasks, saveTasks, generateId } from '../lib/persistence';
 import { getCurrentDateISO } from '../lib/dateUtils';
+import { getAllTags, defaultTags, getTagCounts, filterTasksByTags } from '../lib/tagUtils';
 
 const EisenhowerMatrixApp = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -14,6 +16,8 @@ const EisenhowerMatrixApp = () => {
   const [editTaskId, setEditTaskId] = useState<string | null>(null);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [taskToDelete, setTaskToDelete] = useState<string | null>(null);
+  const [showFilterDropdown, setShowFilterDropdown] = useState(false);
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
 
   useEffect(() => {
     setTasks(loadTasks());
@@ -35,6 +39,7 @@ const EisenhowerMatrixApp = () => {
         deadline: task.deadline,
         timeEstimate: task.timeEstimate,
         completedAt: task.completedAt,
+        tags: task.tags,
         state: 'created',
       },
     ]);
@@ -87,18 +92,42 @@ const EisenhowerMatrixApp = () => {
 
   const isEditing = editTaskId !== null;
   const editingTask = isEditing ? tasks.find(t => t.id === editTaskId) : undefined;
+  const existingTags = [...new Set([...defaultTags, ...getAllTags(tasks)])];
+  const tagCounts = getTagCounts(tasks);
+  const filteredTasks = filterTasksByTags(tasks, selectedTags, 'OR');
 
   return (
     <div style={{ minHeight: '100vh', background: '#f6f8fa', padding: 0, position: 'relative' }}>
       <div style={{ background: '#fff', padding: '32px 40px 16px 40px', boxShadow: '0 2px 8px #0001', borderBottom: '1px solid #ececec', position: 'relative' }}>
-        <button
-          className="btn btn-primary"
-          style={{ position: 'absolute', top: 32, right: 40, zIndex: 10, display: 'flex', alignItems: 'center', gap: 8, fontSize: 15, padding: '8px 18px' }}
-          onClick={() => { setShowModal(true); setEditTaskId(null); }}
-        >
-          <Icon name="plus" size={22} color="#fff" /> Add Task
-        </button>
-        <div style={{ textAlign: 'left', margin: 0, fontSize: 22, fontWeight: 800, letterSpacing: -0.5 }}>Eisenhower Matrix</div>
+        <div style={{ position: 'absolute', top: 32, right: 40, zIndex: 10, display: 'flex', alignItems: 'center', gap: 12 }}>
+          <TagFilterDropdown
+            allTags={existingTags}
+            selectedTags={selectedTags}
+            onTagSelect={(tag: string) => setSelectedTags(prev => [...prev, tag])}
+            onTagDeselect={(tag: string) => setSelectedTags(prev => prev.filter(t => t !== tag))}
+            onClearAll={() => setSelectedTags([])}
+            tagCounts={tagCounts}
+            isOpen={showFilterDropdown}
+            onToggle={() => setShowFilterDropdown(!showFilterDropdown)}
+          >
+            <button
+              className="btn btn-secondary"
+              style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 15, padding: '8px 18px', background: '#f3f4f6', color: '#374151', border: '1px solid #d1d5db', borderRadius: '8px', cursor: 'pointer' }}
+              onClick={() => setShowFilterDropdown(!showFilterDropdown)}
+            >
+              <Icon name="filter" size={18} color="#6b7280" /> 
+              Filter {selectedTags.length > 0 && `(${selectedTags.length})`}
+            </button>
+          </TagFilterDropdown>
+          <button
+            className="btn btn-primary"
+            style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 15, padding: '8px 18px' }}
+            onClick={() => { setShowModal(true); setEditTaskId(null); }}
+          >
+            <Icon name="plus" size={22} color="#fff" /> Add Task
+          </button>
+        </div>
+        <div style={{ textAlign: 'left', margin: 0, fontSize: 22, fontWeight: 800, letterSpacing: -0.5 }}>Eisenhower Matrix..</div>
         <p style={{ textAlign: 'left', color: '#666', margin: '4px 0 0 0', fontSize: 14, fontWeight: 400 }}>
           Organize your tasks by importance and urgency
         </p>
@@ -115,9 +144,11 @@ const EisenhowerMatrixApp = () => {
           deadline: editingTask.deadline,
           timeEstimate: editingTask.timeEstimate,
           completedAt: editingTask.completedAt,
+          tags: editingTask.tags,
         } : undefined}
         headerText={isEditing ? 'Edit Task' : 'Add New Task'}
         submitButtonText={isEditing ? 'Update Task' : 'Add Task'}
+        existingTags={existingTags}
       />
       <ConfirmationDialog
         open={showDeleteConfirm}
@@ -130,12 +161,12 @@ const EisenhowerMatrixApp = () => {
       />
       <div style={{ padding: 24 }}>
         <MatrixBoard
-          tasks={tasks}
+          tasks={filteredTasks}
           onTaskStateChange={handleTaskStateChange}
           onEditTask={handleEditTask}
           onDeleteTask={handleDeleteTask}
         />
-        <Overview tasks={tasks} />
+        <Overview tasks={filteredTasks} />
       </div>
     </div>
   );
