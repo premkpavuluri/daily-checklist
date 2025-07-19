@@ -27,15 +27,37 @@ interface TaskCardProps {
 
 const TaskCard: React.FC<TaskCardProps> = ({ task, onStateChange, onEdit, onDelete }) => {
   const [showDetails, setShowDetails] = useState(false);
-
+  const [isHovered, setIsHovered] = useState(false);
 
 
   return (
-    <div className="task-card" style={{ border: '1px solid #eee', borderRadius: 8, padding: 0, marginBottom: 0, background: '#fff', boxShadow: '0 2px 8px #0001', minHeight: 0, fontSize: 13, width: '100%' }}>
+    <div 
+      className="task-card" 
+      style={{ 
+        border: '1px solid #eee', 
+        borderRadius: 8, 
+        padding: 0, 
+        marginBottom: 0, 
+        background: '#fff', 
+        boxShadow: '0 2px 8px #0001', 
+        minHeight: 0, 
+        fontSize: 13, 
+        width: '100%',
+        position: 'relative'
+      }}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
       {/* Header */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 8px 0 8px' }}>
         <div style={{ fontWeight: 600, fontSize: 14, color: '#22223b', minHeight: 18, maxWidth: '80%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={task.title}>{task.title}</div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+        <div style={{ 
+          display: 'flex', 
+          alignItems: 'center', 
+          gap: 4,
+          opacity: isHovered ? 1 : 0,
+          transition: 'opacity 0.2s ease-in-out'
+        }}>
           <button onClick={onEdit} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 1 }} title="Edit"><Icon name="edit" size={13} color="#64748b" /></button>
           <button onClick={onDelete} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 1 }} title="Delete"><Icon name="close" size={13} color="#64748b" /></button>
         </div>
