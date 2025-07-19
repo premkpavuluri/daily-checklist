@@ -97,7 +97,7 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, onStateChange, onEdit, onDele
               {isOverdue(task.deadline) ? 'Overdue' : formatDate(task.deadline)}
             </span>
           )}
-          {task.timeEstimate && (
+          {task.timeEstimate && task.state !== 'done' && (
             <span style={{ 
               display: 'inline-flex', 
               alignItems: 'center', 
