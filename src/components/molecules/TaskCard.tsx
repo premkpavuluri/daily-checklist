@@ -79,7 +79,7 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, onStateChange, onEdit, onDele
       )}
       {/* Due date, time estimate, and tags */}
       {(task.deadline || task.timeEstimate || (task.tags && task.tags.length > 0)) && (
-        <div style={{ padding: '4px 8px', display: 'flex', flexWrap: 'wrap', gap: 6, alignItems: 'center' }}>
+        <div style={{ padding: '4px 8px', marginBottom: '5px', display: 'flex', flexWrap: 'wrap', gap: 6, alignItems: 'center' }}>
           {task.deadline && task.state !== 'done' && (
             <span style={{ 
               display: 'inline-flex', 
