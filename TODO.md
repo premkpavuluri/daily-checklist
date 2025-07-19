@@ -7,7 +7,6 @@
 - [ ] Add task priority indicators
 - [ ] Add task due date sorting
 - [ ] Improve mobile responsiveness
-- [ ] Add task search functionality
 - [ ] Add task progress tracking
 - [ ] Add task notifications
 - [ ] Task card view: Instead of edit task, give task card view
@@ -37,6 +36,7 @@
 
 
 ## Done
+- [x] Add task search functionality
 - [x] Add task categories/tags
 - [x] Ask for confirmation if we delete the task.
 - [x] Create basic Eisenhower Matrix layout

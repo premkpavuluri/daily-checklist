@@ -6,9 +6,11 @@ import { Task, TaskState } from '../components/molecules/TaskCard';
 import Icon from '../components/atoms/Icon';
 import ConfirmationDialog from '../components/molecules/ConfirmationDialog';
 import TagFilterDropdown from '../components/molecules/TagFilterDropdown';
+import SearchBar from '../components/molecules/SearchBar';
 import { loadTasks, saveTasks, generateId } from '../lib/persistence';
 import { getCurrentDateISO } from '../lib/dateUtils';
 import { getAllTags, getAllAvailableTags, getTagCounts, filterTasksByTags, cleanupUnusedCustomTags } from '../lib/tagUtils';
+import { searchTasksByText } from '../lib/searchUtils';
 
 const EisenhowerMatrixApp = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -18,6 +20,7 @@ const EisenhowerMatrixApp = () => {
   const [taskToDelete, setTaskToDelete] = useState<string | null>(null);
   const [showFilterDropdown, setShowFilterDropdown] = useState(false);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
     const loadedTasks = loadTasks();
@@ -102,12 +105,21 @@ const EisenhowerMatrixApp = () => {
   const availableTags = getAllAvailableTags();
   const existingTags = [...new Set([...availableTags, ...getAllTags(tasks)])];
   const tagCounts = getTagCounts(tasks);
-  const filteredTasks = filterTasksByTags(tasks, selectedTags, 'OR');
+  
+  // Apply search and tag filters
+  const searchFilteredTasks = searchTasksByText(tasks, searchQuery);
+  const filteredTasks = filterTasksByTags(searchFilteredTasks, selectedTags, 'OR');
 
   return (
     <div style={{ minHeight: '100vh', background: '#f6f8fa', padding: 0, position: 'relative' }}>
-      <div style={{ background: '#fff', padding: '32px 40px 16px 40px', boxShadow: '0 2px 8px #0001', borderBottom: '1px solid #ececec', position: 'relative' }}>
+            <div style={{ background: '#fff', padding: '32px 40px 16px 40px', boxShadow: '0 2px 8px #0001', borderBottom: '1px solid #ececec', position: 'relative' }}>
         <div style={{ position: 'absolute', top: 32, right: 40, zIndex: 10, display: 'flex', alignItems: 'center', gap: 12 }}>
+          <SearchBar
+            onSearch={setSearchQuery}
+            allTasks={tasks}
+            placeholder="Search tasks..."
+            style={{ width: '300px' }}
+          />
           <TagFilterDropdown
             allTags={existingTags}
             selectedTags={selectedTags}

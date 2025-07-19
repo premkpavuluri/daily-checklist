@@ -1,7 +1,7 @@
 import React from 'react';
 
 interface IconProps {
-  name: 'edit' | 'delete' | 'done' | 'pause' | 'calendar' | 'clock' | 'plus' | 'close' | 'notes' | 'eye' | 'eye-closed' | 'play' | 'filter' | 'tag' | 'alert';
+  name: 'edit' | 'delete' | 'done' | 'pause' | 'calendar' | 'clock' | 'plus' | 'close' | 'notes' | 'eye' | 'eye-closed' | 'play' | 'filter' | 'tag' | 'alert' | 'search';
   size?: number;
   color?: string;
 }
@@ -22,6 +22,7 @@ const icons: Record<string, React.ReactElement> = {
   filter: <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none"><path d="M3 4a1 1 0 0 1 1-1h16a1 1 0 0 1 1 1v2.586a1 1 0 0 1-.293.707l-6.414 6.414a1 1 0 0 0-.293.707V17l-4 4v-6.586a1 1 0 0 0-.293-.707L3.293 6.293A1 1 0 0 1 3 5.586V4z" stroke="currentColor" strokeWidth="1.5"/></svg>,
   tag: <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none"><path d="M21.41 11.58l-9-9C12.05 2.22 11.55 2 11 2H4c-1.1 0-2 .9-2 2v7c0 .55.22 1.05.59 1.42l9 9c.78.78 2.05.78 2.83 0l7-7c.78-.78.78-2.05 0-2.83zM5.5 7C4.67 7 4 6.33 4 5.5S4.67 4 5.5 4 7 4.67 7 5.5 6.33 7 5.5 7z" fill="currentColor"/></svg>,
   alert: <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none"><path d="M12 2L1 21h22L12 2zm0 3.17L19.83 19H4.17L12 5.17zM11 16h2v2h-2zm0-6h2v4h-2z" fill="currentColor"/></svg>,
+  search: <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" fill="currentColor"/></svg>,
 };
 
 const Icon: React.FC<IconProps> = ({ name, size = 20, color }) => (
