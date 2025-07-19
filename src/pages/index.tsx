@@ -156,7 +156,6 @@ const EisenhowerMatrixApp = () => {
         } : undefined}
         headerText={isEditing ? 'Edit Task' : 'Add New Task'}
         submitButtonText={isEditing ? 'Update Task' : 'Add Task'}
-        existingTags={existingTags}
       />
       <ConfirmationDialog
         open={showDeleteConfirm}

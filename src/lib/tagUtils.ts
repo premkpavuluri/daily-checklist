@@ -4,6 +4,19 @@ export interface TagColor {
   border: string;
 }
 
+export interface Task {
+  id: string;
+  title: string;
+  description?: string;
+  deadline?: string;
+  timeEstimate?: string;
+  state: 'created' | 'in-progress' | 'wip' | 'done';
+  important: boolean;
+  urgent: boolean;
+  completedAt?: string;
+  tags?: string[];
+}
+
 export const tagColors: TagColor[] = [
   { bg: '#dbeafe', text: '#2563eb', border: '#bfdbfe' }, // Blue
   { bg: '#fef3c7', text: '#d97706', border: '#fcd34d' }, // Orange
@@ -69,7 +82,7 @@ export const addCustomTag = (tag: string): void => {
  * Remove unused custom tags from storage
  * @param tasks Array of all tasks to check against
  */
-export const cleanupUnusedCustomTags = (tasks: any[]): void => {
+export const cleanupUnusedCustomTags = (tasks: Task[]): void => {
   const customTags = loadCustomTags();
   const usedTags = new Set<string>();
   
@@ -158,7 +171,7 @@ export const getTagColor = (tagName: string): TagColor => {
 /**
  * Get all unique tags from a list of tasks
  */
-export const getAllTags = (tasks: any[]): string[] => {
+export const getAllTags = (tasks: Task[]): string[] => {
   const tagSet = new Set<string>();
   tasks.forEach(task => {
     if (task.tags) {
@@ -171,7 +184,7 @@ export const getAllTags = (tasks: any[]): string[] => {
 /**
  * Get tag counts for all tags in a list of tasks
  */
-export const getTagCounts = (tasks: any[]): Record<string, number> => {
+export const getTagCounts = (tasks: Task[]): Record<string, number> => {
   const counts: Record<string, number> = {};
   tasks.forEach(task => {
     if (task.tags) {
@@ -188,10 +201,10 @@ export const getTagCounts = (tasks: any[]): Record<string, number> => {
  * Filter tasks based on selected tags and mode
  */
 export const filterTasksByTags = (
-  tasks: any[], 
+  tasks: Task[], 
   selectedTags: string[], 
   mode: 'AND' | 'OR'
-): any[] => {
+): Task[] => {
   if (selectedTags.length === 0) return tasks;
   
   return tasks.filter(task => {

@@ -24,10 +24,9 @@ interface TaskFormProps {
   initialValues?: TaskFormInput;
   headerText?: string;
   submitButtonText?: string;
-  existingTags?: string[];
 }
 
-const TaskForm: React.FC<TaskFormProps> = ({ onSubmit, open, onClose, initialValues, headerText = 'Add New Task', submitButtonText = 'Add Task', existingTags = [] }) => {
+const TaskForm: React.FC<TaskFormProps> = ({ onSubmit, open, onClose, initialValues, headerText = 'Add New Task', submitButtonText = 'Add Task' }) => {
   const [title, setTitle] = useState(initialValues?.title || '');
   const [description, setDescription] = useState(initialValues?.description || '');
   const [important, setImportant] = useState(initialValues?.important ?? true);
@@ -176,7 +175,6 @@ const TaskForm: React.FC<TaskFormProps> = ({ onSubmit, open, onClose, initialVal
               <TagInput 
                 value={tags} 
                 onChange={setTags} 
-                existingTags={existingTags} 
                 placeholder="Add tags..." 
                 style={{ marginBottom: 0 }}
               />

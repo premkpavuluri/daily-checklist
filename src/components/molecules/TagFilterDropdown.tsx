@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useRef, useEffect } from 'react';
 import Icon from '../atoms/Icon';
 import { getTagColor, defaultTags } from '../../lib/tagUtils';
 

@@ -5,7 +5,6 @@ import { getTagColor, validateTagName, addCustomTag, getAllAvailableTags } from 
 interface TagInputProps {
   value: string[];
   onChange: (tags: string[]) => void;
-  existingTags?: string[];
   placeholder?: string;
   style?: React.CSSProperties;
 }
@@ -13,7 +12,6 @@ interface TagInputProps {
 const TagInput: React.FC<TagInputProps> = ({ 
   value, 
   onChange, 
-  existingTags = [], 
   placeholder = "Add tags...",
   style 
 }) => {

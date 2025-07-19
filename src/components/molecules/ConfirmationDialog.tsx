@@ -20,13 +20,6 @@ const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
   confirmText = 'Delete',
   cancelText = 'Cancel'
 }) => {
-  if (!open) return null;
-
-  const handleConfirm = () => {
-    onConfirm();
-    onClose();
-  };
-
   React.useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
@@ -42,6 +35,13 @@ const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
       document.removeEventListener('keydown', handleKeyDown);
     };
   }, [open, onClose]);
+
+  if (!open) return null;
+
+  const handleConfirm = () => {
+    onConfirm();
+    onClose();
+  };
 
   return (
     <div 

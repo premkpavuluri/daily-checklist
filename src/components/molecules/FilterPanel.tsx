@@ -1,6 +1,6 @@
 import React from 'react';
 import Icon from '../atoms/Icon';
-import { getTagColor, getTagCounts } from '../../lib/tagUtils';
+import { getTagColor } from '../../lib/tagUtils';
 
 interface FilterPanelProps {
   allTags: string[];
