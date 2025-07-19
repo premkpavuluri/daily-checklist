@@ -4,6 +4,7 @@ import Icon from '../atoms/Icon';
 import Textarea from '../atoms/Textarea';
 import TagInput from '../atoms/TagInput';
 import { formatDateForInput, parseDateFromInput } from '../../lib/dateUtils';
+import { validateTagName } from '../../lib/tagUtils';
 
 export interface TaskFormInput {
   title: string;
@@ -35,6 +36,7 @@ const TaskForm: React.FC<TaskFormProps> = ({ onSubmit, open, onClose, initialVal
   const [deadline, setDeadline] = useState(initialValues?.deadline ? formatDateForInput(initialValues.deadline) : '');
   const [timeEstimate, setTimeEstimate] = useState(initialValues?.timeEstimate || '');
   const [tags, setTags] = useState<string[]>(initialValues?.tags || []);
+  const [tagValidationError, setTagValidationError] = useState<string>('');
 
   React.useEffect(() => {
     if (open && initialValues) {
@@ -45,6 +47,7 @@ const TaskForm: React.FC<TaskFormProps> = ({ onSubmit, open, onClose, initialVal
       setDeadline(initialValues.deadline ? formatDateForInput(initialValues.deadline) : '');
       setTimeEstimate(initialValues.timeEstimate || '');
       setTags(initialValues.tags || []);
+      setTagValidationError('');
     } else if (open && !initialValues) {
       setTitle('');
       setDescription('');
@@ -53,6 +56,7 @@ const TaskForm: React.FC<TaskFormProps> = ({ onSubmit, open, onClose, initialVal
       setDeadline('');
       setTimeEstimate('');
       setTags([]);
+      setTagValidationError('');
     }
   }, [open, initialValues]);
 
@@ -72,10 +76,29 @@ const TaskForm: React.FC<TaskFormProps> = ({ onSubmit, open, onClose, initialVal
     };
   }, [open, onClose]);
 
+  // Validate all tags
+  const validateAllTags = (): boolean => {
+    for (const tag of tags) {
+      const validation = validateTagName(tag);
+      if (!validation.isValid) {
+        setTagValidationError(`Invalid tag "${tag}": ${validation.error}`);
+        return false;
+      }
+    }
+    setTagValidationError('');
+    return true;
+  };
+
   if (!open) return null;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Validate tags before submission
+    if (!validateAllTags()) {
+      return;
+    }
+    
     onSubmit({ 
       title, 
       description, 
@@ -93,7 +116,21 @@ const TaskForm: React.FC<TaskFormProps> = ({ onSubmit, open, onClose, initialVal
     setTimeEstimate('');
     setTags([]);
     setShowMore(false);
+    setTagValidationError('');
     onClose();
+  };
+
+  const handleFormKeyDown = (e: React.KeyboardEvent) => {
+    // Prevent form submission when Enter is pressed in the tag input
+    if (e.key === 'Enter' && e.target instanceof HTMLInputElement) {
+      const target = e.target as HTMLInputElement;
+      // Check if the input is part of the tag input (has a specific class or is within the tag input container)
+      if (target.closest('[data-tag-input]')) {
+        e.preventDefault();
+        e.stopPropagation();
+        return false;
+      }
+    }
   };
 
   return (
@@ -127,18 +164,37 @@ const TaskForm: React.FC<TaskFormProps> = ({ onSubmit, open, onClose, initialVal
             <Icon name="close" size={24} />
           </button>
         </div>
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} onKeyDown={handleFormKeyDown}>
           <Input label="Task Title *" value={title} autoFocus onChange={e => setTitle(e.target.value)} required style={{ marginBottom: 16, fontSize: 15, fontWeight: 400 }} />
           <Textarea label="Description" value={description} onChange={e => setDescription(e.target.value)} placeholder="Additional details..." />
           <div style={{ margin: '16px 0 0 0' }}>
             <label style={{ display: 'block', fontWeight: 500, marginBottom: 8, fontSize: 14, color: '#4b5563' }}>Tags</label>
-            <TagInput 
-              value={tags} 
-              onChange={setTags} 
-              existingTags={existingTags} 
-              placeholder="Add tags..." 
-              style={{ marginBottom: 0 }}
-            />
+            <div style={{ fontSize: 12, color: '#6b7280', marginBottom: 8, fontStyle: 'italic' }}>
+              Enter tag name and press Enter to create
+            </div>
+            <div data-tag-input>
+              <TagInput 
+                value={tags} 
+                onChange={setTags} 
+                existingTags={existingTags} 
+                placeholder="Add tags..." 
+                style={{ marginBottom: 0 }}
+              />
+            </div>
+            {/* Form-level tag validation error */}
+            {tagValidationError && (
+              <div style={{
+                color: '#ef4444',
+                fontSize: '12px',
+                marginTop: '4px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '4px',
+              }}>
+                <Icon name="alert" size={12} color="#ef4444" />
+                {tagValidationError}
+              </div>
+            )}
           </div>
           <div style={{ margin: '20px 0 0 0' }}>
             <div style={{ fontWeight: 500, marginBottom: 8, fontSize: 14, color: '#4b5563' }}>Does this contribute to your long-term goals?</div>
@@ -294,20 +350,26 @@ const TaskForm: React.FC<TaskFormProps> = ({ onSubmit, open, onClose, initialVal
               marginRight: 0,
               transition: 'background 0.15s, color 0.15s',
             }}>Cancel</button>
-            <button type="submit" style={{
-              minWidth: '50%',
-              fontSize: 15,
-              fontWeight: 500,
-              borderRadius: 8,
-              padding: '12px 15px',
-              background: '#2563eb',
-              color: '#fff',
-              border: 'none',
-              boxShadow: '0 2px 4px #2563eb22',
-              cursor: 'pointer',
-              marginLeft: 0,
-              transition: 'background 0.15s, color 0.15s',
-            }}>{submitButtonText}</button>
+            <button 
+              type="submit" 
+              disabled={tagValidationError.length > 0}
+              style={{
+                minWidth: '50%',
+                fontSize: 15,
+                fontWeight: 500,
+                borderRadius: 8,
+                padding: '12px 15px',
+                background: tagValidationError.length > 0 ? '#9ca3af' : '#2563eb',
+                color: '#fff',
+                border: 'none',
+                boxShadow: '0 2px 4px #2563eb22',
+                cursor: tagValidationError.length > 0 ? 'not-allowed' : 'pointer',
+                marginLeft: 0,
+                transition: 'background 0.15s, color 0.15s',
+              }}
+            >
+              {submitButtonText}
+            </button>
           </div>
         </form>
       </div>

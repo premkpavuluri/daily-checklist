@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import Icon from '../atoms/Icon';
-import { getTagColor } from '../../lib/tagUtils';
+import { getTagColor, defaultTags } from '../../lib/tagUtils';
 
 interface TagFilterDropdownProps {
   allTags: string[];
@@ -52,6 +52,10 @@ const TagFilterDropdown: React.FC<TagFilterDropdownProps> = ({
     }
   };
 
+  // Separate default tags from custom tags
+  const defaultTagList = allTags.filter(tag => defaultTags.includes(tag));
+  const customTagList = allTags.filter(tag => !defaultTags.includes(tag));
+
   return (
     <div ref={dropdownRef} style={{ position: 'relative' }}>
       {/* Trigger Button */}
@@ -67,8 +71,8 @@ const TagFilterDropdown: React.FC<TagFilterDropdownProps> = ({
           borderRadius: '8px',
           boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
           zIndex: 1000,
-          minWidth: '200px',
-          maxHeight: '300px',
+          minWidth: '220px',
+          maxHeight: '400px',
           overflowY: 'auto',
           marginTop: '4px',
         }}>
@@ -104,69 +108,176 @@ const TagFilterDropdown: React.FC<TagFilterDropdownProps> = ({
             )}
           </div>
 
-          {/* Tag List */}
-          <div style={{ padding: '8px 0' }}>
-            {allTags.map((tag) => {
-              const color = getTagColor(tag);
-              const isSelected = selectedTags.includes(tag);
-              const count = tagCounts[tag.toLowerCase()] || 0;
-              
-              return (
-                <label
-                  key={tag}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    padding: '8px 16px',
-                    cursor: 'pointer',
-                    fontSize: '14px',
-                    color: '#374151',
-                    transition: 'background 0.15s',
-                  }}
-                  onMouseOver={(e) => {
-                    e.currentTarget.style.background = '#f9fafb';
-                  }}
-                  onMouseOut={(e) => {
-                    e.currentTarget.style.background = 'transparent';
-                  }}
-                >
-                  <input
-                    type="checkbox"
-                    checked={isSelected}
-                    onChange={() => handleTagToggle(tag)}
-                    style={{
-                      marginRight: '12px',
-                      width: '16px',
-                      height: '16px',
-                      accentColor: color.text,
-                    }}
-                  />
-                  <span style={{
-                    display: 'inline-block',
-                    width: '12px',
-                    height: '12px',
-                    borderRadius: '50%',
-                    background: color.bg,
-                    border: `1px solid ${color.border}`,
-                    marginRight: '8px',
-                  }} />
-                  <span style={{ flex: 1 }}>{tag}</span>
-                  <span style={{
-                    background: '#f3f4f6',
-                    color: '#6b7280',
-                    borderRadius: '12px',
-                    fontSize: '12px',
-                    fontWeight: '500',
-                    padding: '2px 6px',
-                    minWidth: '20px',
-                    textAlign: 'center',
-                  }}>
-                    {count}
-                  </span>
-                </label>
-              );
-            })}
-          </div>
+          {/* Default Tags Section */}
+          {defaultTagList.length > 0 && (
+            <div>
+              <div style={{
+                padding: '8px 16px 4px 16px',
+                fontSize: '12px',
+                fontWeight: '600',
+                color: '#6b7280',
+                textTransform: 'uppercase',
+                letterSpacing: '0.5px',
+                background: '#f9fafb',
+              }}>
+                Default Tags
+              </div>
+              <div style={{ padding: '4px 0' }}>
+                {defaultTagList.map((tag) => {
+                  const color = getTagColor(tag);
+                  const isSelected = selectedTags.includes(tag);
+                  const count = tagCounts[tag.toLowerCase()] || 0;
+                  
+                  return (
+                    <label
+                      key={tag}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        padding: '8px 16px',
+                        cursor: 'pointer',
+                        fontSize: '14px',
+                        color: '#374151',
+                        transition: 'background 0.15s',
+                      }}
+                      onMouseOver={(e) => {
+                        e.currentTarget.style.background = '#f9fafb';
+                      }}
+                      onMouseOut={(e) => {
+                        e.currentTarget.style.background = 'transparent';
+                      }}
+                    >
+                      <input
+                        type="checkbox"
+                        checked={isSelected}
+                        onChange={() => handleTagToggle(tag)}
+                        style={{
+                          marginRight: '12px',
+                          width: '16px',
+                          height: '16px',
+                          accentColor: color.text,
+                        }}
+                      />
+                      <span style={{
+                        display: 'inline-block',
+                        width: '12px',
+                        height: '12px',
+                        borderRadius: '50%',
+                        background: color.bg,
+                        border: `1px solid ${color.border}`,
+                        marginRight: '8px',
+                      }} />
+                      <span style={{ flex: 1 }}>{tag}</span>
+                      <span style={{
+                        background: '#f3f4f6',
+                        color: '#6b7280',
+                        borderRadius: '12px',
+                        fontSize: '12px',
+                        fontWeight: '500',
+                        padding: '2px 6px',
+                        minWidth: '20px',
+                        textAlign: 'center',
+                      }}>
+                        {count}
+                      </span>
+                    </label>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {/* Custom Tags Section */}
+          {customTagList.length > 0 && (
+            <div>
+              <div style={{
+                padding: '8px 16px 4px 16px',
+                fontSize: '12px',
+                fontWeight: '600',
+                color: '#6b7280',
+                textTransform: 'uppercase',
+                letterSpacing: '0.5px',
+                background: '#f9fafb',
+                borderTop: defaultTagList.length > 0 ? '1px solid #e5e7eb' : 'none',
+              }}>
+                Custom Tags
+              </div>
+              <div style={{ padding: '4px 0' }}>
+                {customTagList.map((tag) => {
+                  const color = getTagColor(tag);
+                  const isSelected = selectedTags.includes(tag);
+                  const count = tagCounts[tag.toLowerCase()] || 0;
+                  
+                  return (
+                    <label
+                      key={tag}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        padding: '8px 16px',
+                        cursor: 'pointer',
+                        fontSize: '14px',
+                        color: '#374151',
+                        transition: 'background 0.15s',
+                      }}
+                      onMouseOver={(e) => {
+                        e.currentTarget.style.background = '#f9fafb';
+                      }}
+                      onMouseOut={(e) => {
+                        e.currentTarget.style.background = 'transparent';
+                      }}
+                    >
+                      <input
+                        type="checkbox"
+                        checked={isSelected}
+                        onChange={() => handleTagToggle(tag)}
+                        style={{
+                          marginRight: '12px',
+                          width: '16px',
+                          height: '16px',
+                          accentColor: color.text,
+                        }}
+                      />
+                      <span style={{
+                        display: 'inline-block',
+                        width: '12px',
+                        height: '12px',
+                        borderRadius: '50%',
+                        background: color.bg,
+                        border: `1px solid ${color.border}`,
+                        marginRight: '8px',
+                      }} />
+                      <span style={{ flex: 1 }}>{tag}</span>
+                      <span style={{
+                        background: '#f3f4f6',
+                        color: '#6b7280',
+                        borderRadius: '12px',
+                        fontSize: '12px',
+                        fontWeight: '500',
+                        padding: '2px 6px',
+                        minWidth: '20px',
+                        textAlign: 'center',
+                      }}>
+                        {count}
+                      </span>
+                    </label>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {/* Empty state */}
+          {allTags.length === 0 && (
+            <div style={{
+              padding: '16px',
+              textAlign: 'center',
+              color: '#6b7280',
+              fontSize: '14px',
+            }}>
+              No tags available
+            </div>
+          )}
 
           {/* Footer with selected count */}
           {selectedTags.length > 0 && (

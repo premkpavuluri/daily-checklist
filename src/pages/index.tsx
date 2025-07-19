@@ -8,7 +8,7 @@ import ConfirmationDialog from '../components/molecules/ConfirmationDialog';
 import TagFilterDropdown from '../components/molecules/TagFilterDropdown';
 import { loadTasks, saveTasks, generateId } from '../lib/persistence';
 import { getCurrentDateISO } from '../lib/dateUtils';
-import { getAllTags, defaultTags, getTagCounts, filterTasksByTags } from '../lib/tagUtils';
+import { getAllTags, getAllAvailableTags, getTagCounts, filterTasksByTags, cleanupUnusedCustomTags } from '../lib/tagUtils';
 
 const EisenhowerMatrixApp = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -20,11 +20,16 @@ const EisenhowerMatrixApp = () => {
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
 
   useEffect(() => {
-    setTasks(loadTasks());
+    const loadedTasks = loadTasks();
+    setTasks(loadedTasks);
+    // Clean up unused custom tags on app start
+    cleanupUnusedCustomTags(loadedTasks);
   }, []);
 
   useEffect(() => {
     saveTasks(tasks);
+    // Clean up unused custom tags whenever tasks change
+    cleanupUnusedCustomTags(tasks);
   }, [tasks]);
 
   const handleAddTask = (task: TaskFormInput) => {
@@ -39,7 +44,7 @@ const EisenhowerMatrixApp = () => {
         deadline: task.deadline,
         timeEstimate: task.timeEstimate,
         completedAt: task.completedAt,
-        tags: task.tags,
+        tags: task.tags && task.tags.length > 0 ? task.tags : ['others'],
         state: 'created',
       },
     ]);
@@ -49,6 +54,8 @@ const EisenhowerMatrixApp = () => {
     setTasks(prev => prev.map(t => {
       if (t.id === editTaskId) {
         const updatedTask = { ...t, ...task };
+        // Only apply default tag if no tags are provided
+        updatedTask.tags = task.tags && task.tags.length > 0 ? task.tags : ['others'];
         // Preserve completion date if task is already done
         if (t.state === 'done' && t.completedAt && !task.completedAt) {
           updatedTask.completedAt = t.completedAt;
@@ -92,7 +99,8 @@ const EisenhowerMatrixApp = () => {
 
   const isEditing = editTaskId !== null;
   const editingTask = isEditing ? tasks.find(t => t.id === editTaskId) : undefined;
-  const existingTags = [...new Set([...defaultTags, ...getAllTags(tasks)])];
+  const availableTags = getAllAvailableTags();
+  const existingTags = [...new Set([...availableTags, ...getAllTags(tasks)])];
   const tagCounts = getTagCounts(tasks);
   const filteredTasks = filterTasksByTags(tasks, selectedTags, 'OR');
 
@@ -127,7 +135,7 @@ const EisenhowerMatrixApp = () => {
             <Icon name="plus" size={22} color="#fff" /> Add Task
           </button>
         </div>
-        <div style={{ textAlign: 'left', margin: 0, fontSize: 22, fontWeight: 800, letterSpacing: -0.5 }}>Eisenhower Matrix..</div>
+        <div style={{ textAlign: 'left', margin: 0, fontSize: 22, fontWeight: 800, letterSpacing: -0.5 }}>Eisenhower Matrix</div>
         <p style={{ textAlign: 'left', color: '#666', margin: '4px 0 0 0', fontSize: 14, fontWeight: 400 }}>
           Organize your tasks by importance and urgency
         </p>

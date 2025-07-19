@@ -20,15 +20,117 @@ export const tagColors: TagColor[] = [
 export const defaultTags = [
   'work',
   'personal', 
-  'urgent',
-  'important',
-  'meeting',
-  'email',
-  'call',
-  'research',
-  'planning',
-  'review'
+  'others'
 ];
+
+// Storage key for custom tags
+const CUSTOM_TAGS_KEY = 'eisenhower-custom-tags';
+
+/**
+ * Load custom tags from localStorage
+ */
+export const loadCustomTags = (): string[] => {
+  try {
+    const data = localStorage.getItem(CUSTOM_TAGS_KEY);
+    return data ? JSON.parse(data) : [];
+  } catch {
+    return [];
+  }
+};
+
+/**
+ * Save custom tags to localStorage
+ */
+export const saveCustomTags = (tags: string[]): void => {
+  localStorage.setItem(CUSTOM_TAGS_KEY, JSON.stringify(tags));
+};
+
+/**
+ * Get all available tags (default + custom)
+ */
+export const getAllAvailableTags = (): string[] => {
+  const customTags = loadCustomTags();
+  return [...defaultTags, ...customTags];
+};
+
+/**
+ * Add a new custom tag
+ */
+export const addCustomTag = (tag: string): void => {
+  const customTags = loadCustomTags();
+  if (!customTags.includes(tag) && !defaultTags.includes(tag)) {
+    customTags.push(tag);
+    saveCustomTags(customTags);
+    console.log('Custom tag added:', tag, 'All custom tags:', customTags);
+  }
+};
+
+/**
+ * Remove unused custom tags from storage
+ * @param tasks Array of all tasks to check against
+ */
+export const cleanupUnusedCustomTags = (tasks: any[]): void => {
+  const customTags = loadCustomTags();
+  const usedTags = new Set<string>();
+  
+  // Collect all tags that are actually used in tasks
+  tasks.forEach(task => {
+    if (task.tags) {
+      task.tags.forEach((tag: string) => {
+        usedTags.add(tag.toLowerCase());
+      });
+    }
+  });
+  
+  // Filter out unused custom tags (keep default tags)
+  const usedCustomTags = customTags.filter(tag => {
+    // Keep default tags
+    if (defaultTags.includes(tag)) {
+      return true;
+    }
+    // Keep custom tags that are still in use
+    return usedTags.has(tag.toLowerCase());
+  });
+  
+  // If we removed any tags, save the updated list
+  if (usedCustomTags.length !== customTags.length) {
+    const removedTags = customTags.filter(tag => !usedCustomTags.includes(tag));
+    console.log('Cleaned up unused custom tags:', removedTags);
+    saveCustomTags(usedCustomTags);
+  }
+};
+
+/**
+ * Debug function to check custom tags
+ */
+export const debugCustomTags = (): void => {
+  const customTags = loadCustomTags();
+  console.log('Current custom tags:', customTags);
+  console.log('All available tags:', getAllAvailableTags());
+};
+
+/**
+ * Validate tag name (no spaces, no special characters except hyphens and underscores)
+ */
+export const validateTagName = (tagName: string): { isValid: boolean; error?: string } => {
+  if (!tagName.trim()) {
+    return { isValid: false, error: 'Tag name cannot be empty' };
+  }
+  
+  if (tagName.includes(' ')) {
+    return { isValid: false, error: 'Tag name cannot contain spaces' };
+  }
+  
+  if (!/^[a-zA-Z0-9_-]+$/.test(tagName)) {
+    return { isValid: false, error: 'Tag name can only contain letters, numbers, hyphens (-), and underscores (_)' };
+  }
+  
+  if (tagName.length > 20) {
+    return { isValid: false, error: 'Tag name cannot be longer than 20 characters' };
+  }
+  
+  return { isValid: true };
+};
 
 /**
  * Generate a consistent color for a tag based on its name
@@ -91,4 +193,14 @@ export const filterTasksByTags = (
       return selectedTags.some(tag => taskTags.includes(tag.toLowerCase()));
     }
   });
+};
+
+/**
+ * Ensure task has at least the "others" tag if no tags are provided
+ */
+export const ensureDefaultTag = (tags?: string[]): string[] => {
+  if (!tags || tags.length === 0) {
+    return ['others'];
+  }
+  return tags;
 }; 

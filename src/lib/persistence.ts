@@ -1,4 +1,5 @@
 import { Task } from '../components/molecules/TaskCard';
+import { validateTagName } from './tagUtils';
 
 // Storage key for tasks
 const TASKS_KEY = 'eisenhower-tasks';
@@ -10,7 +11,37 @@ const TASKS_KEY = 'eisenhower-tasks';
 export const loadTasks = (): Task[] => {
   try {
     const data = localStorage.getItem(TASKS_KEY);
-    return data ? JSON.parse(data) : [];
+    const tasks = data ? JSON.parse(data) : [];
+    
+    // Migrate existing tasks to ensure they have valid tags
+    const migratedTasks = tasks.map((task: Task) => {
+      let validTags: string[] = [];
+      
+      if (task.tags && task.tags.length > 0) {
+        // Filter out invalid tags
+        validTags = task.tags.filter(tag => {
+          const validation = validateTagName(tag);
+          return validation.isValid;
+        });
+      }
+      
+      // If no valid tags remain, use default tag
+      if (validTags.length === 0) {
+        validTags = ['others'];
+      }
+      
+      return {
+        ...task,
+        tags: validTags
+      };
+    });
+    
+    // Save migrated tasks back if any changes were made
+    if (JSON.stringify(tasks) !== JSON.stringify(migratedTasks)) {
+      saveTasks(migratedTasks);
+    }
+    
+    return migratedTasks;
   } catch {
     return [];
   }
