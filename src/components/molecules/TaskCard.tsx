@@ -105,9 +105,11 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, onStateChange, onEdit, onDele
                   fontSize: 11,
                   fontWeight: 500,
                   padding: '2px 8px',
+                  gap: 4,
                   border: `1px solid ${color.border}`,
                 }}
               >
+                <Icon name="tag" size={10} color={color.text} />
                 {tag}
               </span>
             );

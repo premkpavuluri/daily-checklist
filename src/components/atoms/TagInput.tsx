@@ -143,6 +143,7 @@ const TagInput: React.FC<TagInputProps> = ({
                 border: `1px solid ${color.border}`,
               }}
             >
+              <Icon name="tag" size={11} color={color.text} />
               {tag}
               <button
                 onClick={() => removeTag(tag)}

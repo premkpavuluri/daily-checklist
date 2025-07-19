@@ -158,16 +158,8 @@ const TagFilterDropdown: React.FC<TagFilterDropdownProps> = ({
                           accentColor: color.text,
                         }}
                       />
-                      <span style={{
-                        display: 'inline-block',
-                        width: '12px',
-                        height: '12px',
-                        borderRadius: '50%',
-                        background: color.bg,
-                        border: `1px solid ${color.border}`,
-                        marginRight: '8px',
-                      }} />
-                      <span style={{ flex: 1 }}>{tag}</span>
+                      <Icon name="tag" size={12} color={color.text} />
+                      <span style={{ flex: 1, marginLeft: '8px' }}>{tag}</span>
                       <span style={{
                         background: '#f3f4f6',
                         color: '#6b7280',
@@ -238,16 +230,8 @@ const TagFilterDropdown: React.FC<TagFilterDropdownProps> = ({
                           accentColor: color.text,
                         }}
                       />
-                      <span style={{
-                        display: 'inline-block',
-                        width: '12px',
-                        height: '12px',
-                        borderRadius: '50%',
-                        background: color.bg,
-                        border: `1px solid ${color.border}`,
-                        marginRight: '8px',
-                      }} />
-                      <span style={{ flex: 1 }}>{tag}</span>
+                      <Icon name="tag" size={12} color={color.text} />
+                      <span style={{ flex: 1, marginLeft: '8px' }}>{tag}</span>
                       <span style={{
                         background: '#f3f4f6',
                         color: '#6b7280',

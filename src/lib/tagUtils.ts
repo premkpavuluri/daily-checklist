@@ -10,11 +10,11 @@ export const tagColors: TagColor[] = [
   { bg: '#dcfce7', text: '#16a34a', border: '#bbf7d0' }, // Green
   { bg: '#fce7f3', text: '#ec4899', border: '#f9a8d4' }, // Pink
   { bg: '#e0e7ff', text: '#7c3aed', border: '#c7d2fe' }, // Purple
-  { bg: '#fef2f2', text: '#dc2626', border: '#fecaca' }, // Red
   { bg: '#f0fdf4', text: '#059669', border: '#a7f3d0' }, // Emerald
   { bg: '#fef9c3', text: '#ca8a04', border: '#fde047' }, // Yellow
   { bg: '#f1f5f9', text: '#475569', border: '#cbd5e1' }, // Gray
   { bg: '#f0f9ff', text: '#0284c7', border: '#7dd3fc' }, // Sky
+  { bg: '#ccfbf1', text: '#0d9488', border: '#99f6e4' }, // Teal
 ];
 
 export const defaultTags = [
@@ -136,6 +136,18 @@ export const validateTagName = (tagName: string): { isValid: boolean; error?: st
  * Generate a consistent color for a tag based on its name
  */
 export const getTagColor = (tagName: string): TagColor => {
+  // Assign specific colors to default tags
+  if (tagName === 'work') {
+    return { bg: '#dbeafe', text: '#2563eb', border: '#bfdbfe' }; // Blue
+  }
+  if (tagName === 'personal') {
+    return { bg: '#dcfce7', text: '#16a34a', border: '#bbf7d0' }; // Green
+  }
+  if (tagName === 'others') {
+    return { bg: '#f1f5f9', text: '#475569', border: '#cbd5e1' }; // Gray
+  }
+  
+  // For custom tags, use hash-based color generation
   const hash = tagName.toLowerCase().split('').reduce((a, b) => {
     a = ((a << 5) - a) + b.charCodeAt(0);
     return a & a;
