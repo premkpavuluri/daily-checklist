@@ -1,7 +1,7 @@
 # Todo List
 
 ## Yet To-do:
-- [ ] Add task editing functionality
+
 - [ ] Add task filtering options
 - [ ] Implement drag and drop between matrix quadrants
 - [ ] Add task priority indicators
@@ -10,7 +10,7 @@
 - [ ] Add task progress tracking
 - [ ] Add task notifications
 - [ ] Task card view: Instead of edit task, give task card view
-    - [ ] Details
+    - [ ] Details ( should render markup)
     - [ ] tag
     - [ ] History
     - [ ] comments
@@ -42,6 +42,7 @@
 - [x] Create basic Eisenhower Matrix layout
 - [x] Implement task creation
 - [x] Add task deletion
+- [x] Add task editing functionality
 - [x] Add task state management
 - [x] Implement task persistence
 - [x] Add task details view
