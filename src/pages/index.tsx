@@ -26,47 +26,69 @@ const EisenhowerMatrixApp = () => {
     const loadedTasks = loadTasks();
     setTasks(loadedTasks);
     // Clean up unused custom tags on app start
-    cleanupUnusedCustomTags(loadedTasks);
+    if (loadedTasks.length > 0) {
+      cleanupUnusedCustomTags(loadedTasks);
+    }
   }, []);
 
   useEffect(() => {
     saveTasks(tasks);
     // Clean up unused custom tags whenever tasks change
-    cleanupUnusedCustomTags(tasks);
+    if (tasks.length > 0) {
+      cleanupUnusedCustomTags(tasks);
+    }
   }, [tasks]);
 
   const handleAddTask = (task: TaskFormInput) => {
-    setTasks(prev => [
-      ...prev,
-      {
-        id: generateId(),
-        title: task.title,
-        description: task.description,
-        important: task.important,
-        urgent: task.urgent,
-        deadline: task.deadline,
-        timeEstimate: task.timeEstimate,
-        completedAt: task.completedAt,
-        tags: task.tags && task.tags.length > 0 ? task.tags : ['others'],
-        state: 'created',
-      },
-    ]);
+    setTasks(prev => {
+      const newTasks = [
+        ...prev,
+        {
+          id: generateId(),
+          title: task.title,
+          description: task.description,
+          important: task.important,
+          urgent: task.urgent,
+          deadline: task.deadline,
+          timeEstimate: task.timeEstimate,
+          completedAt: task.completedAt,
+          tags: task.tags && task.tags.length > 0 ? task.tags : ['others'],
+          state: 'created' as TaskState,
+        },
+      ];
+      
+      // Clean up unused tags after adding new task
+      if (newTasks.length > 0) {
+        cleanupUnusedCustomTags(newTasks);
+      }
+      
+      return newTasks;
+    });
   };
 
   const handleUpdateTask = (task: TaskFormInput) => {
-    setTasks(prev => prev.map(t => {
-      if (t.id === editTaskId) {
-        const updatedTask = { ...t, ...task };
-        // Only apply default tag if no tags are provided
-        updatedTask.tags = task.tags && task.tags.length > 0 ? task.tags : ['others'];
-        // Preserve completion date if task is already done
-        if (t.state === 'done' && t.completedAt && !task.completedAt) {
-          updatedTask.completedAt = t.completedAt;
+    setTasks(prev => {
+      const updatedTasks = prev.map(t => {
+        if (t.id === editTaskId) {
+          const updatedTask = { ...t, ...task };
+          // Only apply default tag if no tags are provided
+          updatedTask.tags = task.tags && task.tags.length > 0 ? task.tags : ['others'];
+          // Preserve completion date if task is already done
+          if (t.state === 'done' && t.completedAt && !task.completedAt) {
+            updatedTask.completedAt = t.completedAt;
+          }
+          return updatedTask;
         }
-        return updatedTask;
+        return t;
+      });
+      
+      // Clean up unused tags after task update
+      if (updatedTasks.length > 0) {
+        cleanupUnusedCustomTags(updatedTasks);
       }
-      return t;
-    }));
+      
+      return updatedTasks;
+    });
   };
 
   const handleTaskStateChange = (taskId: string, state: TaskState) => {
@@ -95,7 +117,14 @@ const EisenhowerMatrixApp = () => {
 
   const confirmDeleteTask = () => {
     if (taskToDelete) {
-      setTasks(prev => prev.filter(t => t.id !== taskToDelete));
+      setTasks(prev => {
+        const updatedTasks = prev.filter(t => t.id !== taskToDelete);
+        // Clean up unused tags after task deletion
+        if (updatedTasks.length > 0) {
+          cleanupUnusedCustomTags(updatedTasks);
+        }
+        return updatedTasks;
+      });
       setTaskToDelete(null);
     }
   };
@@ -112,7 +141,7 @@ const EisenhowerMatrixApp = () => {
 
   return (
     <div style={{ minHeight: '100vh', background: '#f6f8fa', padding: 0, position: 'relative' }}>
-            <div style={{ background: '#fff', padding: '32px 40px 16px 40px', boxShadow: '0 2px 8px #0001', borderBottom: '1px solid #ececec', position: 'relative' }}>
+      <div style={{ background: '#fff', padding: '32px 40px 16px 40px', boxShadow: '0 2px 8px #0001', borderBottom: '1px solid #ececec', position: 'relative' }}>
         <div style={{ position: 'absolute', top: 32, right: 40, zIndex: 10, display: 'flex', alignItems: 'center', gap: 12 }}>
           <SearchBar
             onSearch={setSearchQuery}

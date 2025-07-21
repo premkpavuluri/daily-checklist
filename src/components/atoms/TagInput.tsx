@@ -22,7 +22,19 @@ const TagInput: React.FC<TagInputProps> = ({
   const inputRef = useRef<HTMLInputElement>(null);
 
   // Get all available tags (default + custom) - this updates when new custom tags are added
-  const allAvailableTags = getAllAvailableTags();
+  const [allAvailableTags, setAllAvailableTags] = useState<string[]>([]);
+
+  // Update available tags when refreshTrigger changes (when new custom tags are added)
+  useEffect(() => {
+    const newAvailableTags = getAllAvailableTags();
+    setAllAvailableTags(newAvailableTags);
+  }, [refreshTrigger]);
+
+  // Initialize available tags on component mount
+  useEffect(() => {
+    const initialTags = getAllAvailableTags();
+    setAllAvailableTags(initialTags);
+  }, []);
 
   const filteredSuggestions = allAvailableTags.filter(
     tag => tag.toLowerCase().includes(inputValue.toLowerCase()) && !value.includes(tag)

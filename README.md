@@ -1,20 +1,15 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/pages/api-reference/create-next-app).
+# Daily Checklist - Eisenhower Matrix App
+
+A modern, responsive web application for managing tasks using the Eisenhower Matrix method. Built with Next.js, TypeScript, and React.
 
 ## Features
 
 - **Eisenhower Matrix**: Organize tasks by importance and urgency
-- **Timezone Support**: Automatic timezone detection with fallback to Indian timezone (Asia/Kolkata)
-- **Date Formatting**: Localized date display with "Today", "Tomorrow", and relative dates
-- **Task Management**: Create, edit, delete, and track task completion
-- **Persistent Storage**: Tasks are saved locally in the browser
-
-## Timezone Handling
-
-The app automatically detects the user's browser timezone and formats all dates accordingly. If the browser timezone cannot be detected, it defaults to Indian timezone (Asia/Kolkata). All date operations are timezone-aware:
-
-- Task deadlines are displayed in the user's local timezone
-- Completion dates are formatted with timezone consideration
-- Date inputs are properly converted between local timezone and UTC for storage
+- **Tag System**: Categorize tasks with custom tags
+- **Search & Filter**: Find tasks quickly with text search and tag filtering
+- **Task Management**: Create, edit, delete, and track task progress
+- **Responsive Design**: Works on desktop and mobile devices
+- **Local Storage**: Data persists in your browser
 
 ## Getting Started
 
@@ -32,13 +27,13 @@ bun dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+## Data Storage
 
-[API routes](https://nextjs.org/docs/pages/building-your-application/routing/api-routes) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+All data is stored locally in your browser using localStorage:
+- Tasks: `eisenhower-tasks`
+- Custom Tags: `eisenhower-custom-tags`
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/pages/building-your-application/routing/api-routes) instead of React pages.
-
-This project uses [`next/font`](https://nextjs.org/docs/pages/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Data is not synced to any external servers and remains private to your device.
 
 ## Learn More
 

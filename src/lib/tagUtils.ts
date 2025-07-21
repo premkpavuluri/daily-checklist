@@ -40,13 +40,37 @@ export const defaultTags = [
 const CUSTOM_TAGS_KEY = 'eisenhower-custom-tags';
 
 /**
+ * Add a new custom tag
+ */
+export const addCustomTag = (tag: string): void => {
+  try {
+    const customTags = loadCustomTags();
+    
+    if (!customTags.includes(tag) && !defaultTags.includes(tag)) {
+      customTags.push(tag);
+      saveCustomTags(customTags);
+      console.log('Custom tag added:', tag);
+    }
+  } catch (error) {
+    console.error('Error adding custom tag:', error);
+  }
+};
+
+/**
  * Load custom tags from localStorage
  */
 export const loadCustomTags = (): string[] => {
   try {
     const data = localStorage.getItem(CUSTOM_TAGS_KEY);
-    return data ? JSON.parse(data) : [];
-  } catch {
+    
+    if (data) {
+      const parsedTags = JSON.parse(data);
+      return parsedTags;
+    } else {
+      return [];
+    }
+  } catch (error) {
+    console.error('Error loading custom tags from localStorage:', error);
     return [];
   }
 };
@@ -55,7 +79,11 @@ export const loadCustomTags = (): string[] => {
  * Save custom tags to localStorage
  */
 export const saveCustomTags = (tags: string[]): void => {
-  localStorage.setItem(CUSTOM_TAGS_KEY, JSON.stringify(tags));
+  try {
+    localStorage.setItem(CUSTOM_TAGS_KEY, JSON.stringify(tags));
+  } catch (error) {
+    console.error('Error saving custom tags to localStorage:', error);
+  }
 };
 
 /**
@@ -67,59 +95,91 @@ export const getAllAvailableTags = (): string[] => {
 };
 
 /**
- * Add a new custom tag
- */
-export const addCustomTag = (tag: string): void => {
-  const customTags = loadCustomTags();
-  if (!customTags.includes(tag) && !defaultTags.includes(tag)) {
-    customTags.push(tag);
-    saveCustomTags(customTags);
-    console.log('Custom tag added:', tag, 'All custom tags:', customTags);
-  }
-};
-
-/**
  * Remove unused custom tags from storage
  * @param tasks Array of all tasks to check against
  */
 export const cleanupUnusedCustomTags = (tasks: Task[]): void => {
-  const customTags = loadCustomTags();
-  const usedTags = new Set<string>();
-  
-  // Collect all tags that are actually used in tasks
-  tasks.forEach(task => {
-    if (task.tags) {
-      task.tags.forEach((tag: string) => {
-        usedTags.add(tag.toLowerCase());
-      });
+  try {
+    const customTags = loadCustomTags();
+    
+    const usedTags = new Set<string>();
+    
+    // Collect all tags that are actually used in tasks
+    tasks.forEach(task => {
+      if (task.tags) {
+        task.tags.forEach((tag: string) => {
+          usedTags.add(tag.toLowerCase());
+        });
+      }
+    });
+    
+    // Filter out unused custom tags (keep default tags)
+    const usedCustomTags = customTags.filter(tag => {
+      // Always keep default tags
+      if (defaultTags.includes(tag)) {
+        return true;
+      }
+      // Keep custom tags that are still in use
+      return usedTags.has(tag.toLowerCase());
+    });
+    
+    // Only clean up if we actually have unused tags
+    if (usedCustomTags.length !== customTags.length) {
+      const removedTags = customTags.filter(tag => !usedCustomTags.includes(tag));
+      console.log('Cleaned up unused custom tags:', removedTags);
+      saveCustomTags(usedCustomTags);
     }
-  });
-  
-  // Filter out unused custom tags (keep default tags)
-  const usedCustomTags = customTags.filter(tag => {
-    // Keep default tags
-    if (defaultTags.includes(tag)) {
-      return true;
-    }
-    // Keep custom tags that are still in use
-    return usedTags.has(tag.toLowerCase());
-  });
-  
-  // If we removed any tags, save the updated list
-  if (usedCustomTags.length !== customTags.length) {
-    const removedTags = customTags.filter(tag => !usedCustomTags.includes(tag));
-    console.log('Cleaned up unused custom tags:', removedTags);
-    saveCustomTags(usedCustomTags);
+  } catch (error) {
+    console.error('Error during custom tags cleanup:', error);
   }
 };
 
 /**
- * Debug function to check custom tags
+ * Analyze tag usage and show what would be cleaned up
+ * @param tasks Array of all tasks to check against
  */
-export const debugCustomTags = (): void => {
-  const customTags = loadCustomTags();
-  console.log('Current custom tags:', customTags);
-  console.log('All available tags:', getAllAvailableTags());
+export const analyzeTagUsage = (tasks: Task[]): void => {
+  try {
+    console.log('=== Analyzing Tag Usage ===');
+    const customTags = loadCustomTags();
+    console.log('All custom tags:', customTags);
+    
+    const usedTags = new Set<string>();
+    
+    // Collect all tags that are actually used in tasks
+    tasks.forEach(task => {
+      if (task.tags) {
+        task.tags.forEach((tag: string) => {
+          usedTags.add(tag.toLowerCase());
+        });
+      }
+    });
+    
+    console.log('Tags currently used in tasks:', Array.from(usedTags));
+    
+    // Analyze each custom tag
+    customTags.forEach(tag => {
+      if (defaultTags.includes(tag)) {
+        console.log(`✅ ${tag} (default tag - always kept)`);
+      } else {
+        const isUsed = usedTags.has(tag.toLowerCase());
+        console.log(`${isUsed ? '✅' : '❌'} ${tag} (${isUsed ? 'USED' : 'UNUSED'})`);
+      }
+    });
+    
+    // Show what would be removed
+    const unusedTags = customTags.filter(tag => 
+      !defaultTags.includes(tag) && !usedTags.has(tag.toLowerCase())
+    );
+    
+    if (unusedTags.length > 0) {
+      console.log('Tags that would be removed:', unusedTags);
+    } else {
+      console.log('No unused tags to remove');
+    }
+  } catch (error) {
+    console.error('Error analyzing tag usage:', error);
+  }
 };
 
 /**
