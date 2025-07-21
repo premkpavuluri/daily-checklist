@@ -44,12 +44,22 @@ const CUSTOM_TAGS_KEY = 'eisenhower-custom-tags';
  */
 export const addCustomTag = (tag: string): void => {
   try {
+    // Ensure tag is lowercase for consistency
+    const normalizedTag = tag.toLowerCase();
     const customTags = loadCustomTags();
     
-    if (!customTags.includes(tag) && !defaultTags.includes(tag)) {
-      customTags.push(tag);
+    // Check if tag already exists (case-insensitive)
+    const tagExists = customTags.some(existingTag => 
+      existingTag.toLowerCase() === normalizedTag
+    );
+    
+    if (!tagExists && !defaultTags.includes(normalizedTag)) {
+      // Always save in lowercase
+      customTags.push(normalizedTag);
       saveCustomTags(customTags);
-      console.log('Custom tag added:', tag);
+      console.log('Custom tag added:', normalizedTag);
+    } else {
+      console.log('Tag already exists or is a default tag:', normalizedTag);
     }
   } catch (error) {
     console.error('Error adding custom tag:', error);
@@ -100,11 +110,14 @@ export const getAllAvailableTags = (): string[] => {
  */
 export const cleanupUnusedCustomTags = (tasks: Task[]): void => {
   try {
+    // First clean up duplicates
+    cleanupDuplicateTags();
+    
     const customTags = loadCustomTags();
     
     const usedTags = new Set<string>();
     
-    // Collect all tags that are actually used in tasks
+    // Collect all tags that are actually used in tasks (case-insensitive)
     tasks.forEach(task => {
       if (task.tags) {
         task.tags.forEach((tag: string) => {
@@ -116,10 +129,10 @@ export const cleanupUnusedCustomTags = (tasks: Task[]): void => {
     // Filter out unused custom tags (keep default tags)
     const usedCustomTags = customTags.filter(tag => {
       // Always keep default tags
-      if (defaultTags.includes(tag)) {
+      if (defaultTags.includes(tag.toLowerCase())) {
         return true;
       }
-      // Keep custom tags that are still in use
+      // Keep custom tags that are still in use (case-insensitive)
       return usedTags.has(tag.toLowerCase());
     });
     
@@ -288,4 +301,71 @@ export const ensureDefaultTag = (tags?: string[]): string[] => {
     return ['others'];
   }
   return tags;
+}; 
+
+/**
+ * Clean up duplicate tags with different capitalization
+ */
+export const cleanupDuplicateTags = (): void => {
+  try {
+    const customTags = loadCustomTags();
+    const uniqueTags = new Map<string, string>();
+    
+    // Convert all tags to lowercase and keep unique ones
+    customTags.forEach(tag => {
+      const lowerTag = tag.toLowerCase();
+      if (!uniqueTags.has(lowerTag)) {
+        uniqueTags.set(lowerTag, lowerTag); // Always use lowercase
+      }
+    });
+    
+    const cleanedTags = Array.from(uniqueTags.values());
+    
+    if (cleanedTags.length !== customTags.length || 
+        !cleanedTags.every(tag => tag === tag.toLowerCase())) {
+      const removedDuplicates = customTags.filter(tag => !cleanedTags.includes(tag));
+      console.log('Cleaned up duplicate tags and converted to lowercase:', removedDuplicates);
+      saveCustomTags(cleanedTags);
+    }
+  } catch (error) {
+    console.error('Error cleaning up duplicate tags:', error);
+  }
+}; 
+
+/**
+ * Force cleanup duplicate tags immediately
+ */
+export const forceCleanupDuplicates = (): void => {
+  try {
+    console.log('=== Force Cleaning Duplicate Tags ===');
+    const customTags = loadCustomTags();
+    console.log('Current tags before cleanup:', customTags);
+    
+    const uniqueTags = new Map<string, string>();
+    
+    // Keep the first occurrence of each tag (case-insensitive)
+    customTags.forEach(tag => {
+      const lowerTag = tag.toLowerCase();
+      if (!uniqueTags.has(lowerTag)) {
+        uniqueTags.set(lowerTag, tag);
+        console.log(`Keeping tag: ${tag}`);
+      } else {
+        console.log(`Removing duplicate: ${tag} (keeping: ${uniqueTags.get(lowerTag)})`);
+      }
+    });
+    
+    const cleanedTags = Array.from(uniqueTags.values());
+    console.log('Tags after cleanup:', cleanedTags);
+    
+    if (cleanedTags.length !== customTags.length) {
+      const removedDuplicates = customTags.filter(tag => !cleanedTags.includes(tag));
+      console.log('Removed duplicate tags:', removedDuplicates);
+      saveCustomTags(cleanedTags);
+      console.log('✅ Duplicate cleanup completed');
+    } else {
+      console.log('No duplicates found');
+    }
+  } catch (error) {
+    console.error('Error during force cleanup:', error);
+  }
 }; 

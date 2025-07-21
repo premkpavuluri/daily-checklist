@@ -9,7 +9,7 @@ import TagFilterDropdown from '../components/molecules/TagFilterDropdown';
 import SearchBar from '../components/molecules/SearchBar';
 import { loadTasks, saveTasks, generateId } from '../lib/persistence';
 import { getCurrentDateISO } from '../lib/dateUtils';
-import { getAllTags, getAllAvailableTags, getTagCounts, filterTasksByTags, cleanupUnusedCustomTags } from '../lib/tagUtils';
+import { getAllTags, getAllAvailableTags, getTagCounts, filterTasksByTags, cleanupUnusedCustomTags, cleanupDuplicateTags } from '../lib/tagUtils';
 import { searchTasksByText } from '../lib/searchUtils';
 
 const EisenhowerMatrixApp = () => {
@@ -25,7 +25,8 @@ const EisenhowerMatrixApp = () => {
   useEffect(() => {
     const loadedTasks = loadTasks();
     setTasks(loadedTasks);
-    // Clean up unused custom tags on app start
+    // Clean up duplicate tags first, then unused tags
+    cleanupDuplicateTags();
     if (loadedTasks.length > 0) {
       cleanupUnusedCustomTags(loadedTasks);
     }
@@ -52,7 +53,9 @@ const EisenhowerMatrixApp = () => {
           deadline: task.deadline,
           timeEstimate: task.timeEstimate,
           completedAt: task.completedAt,
-          tags: task.tags && task.tags.length > 0 ? task.tags : ['others'],
+          tags: task.tags && task.tags.length > 0 
+            ? task.tags.map(tag => tag.toLowerCase()) 
+            : ['others'],
           state: 'created' as TaskState,
         },
       ];
@@ -71,8 +74,10 @@ const EisenhowerMatrixApp = () => {
       const updatedTasks = prev.map(t => {
         if (t.id === editTaskId) {
           const updatedTask = { ...t, ...task };
-          // Only apply default tag if no tags are provided
-          updatedTask.tags = task.tags && task.tags.length > 0 ? task.tags : ['others'];
+          // Only apply default tag if no tags are provided, and convert to lowercase
+          updatedTask.tags = task.tags && task.tags.length > 0 
+            ? task.tags.map(tag => tag.toLowerCase()) 
+            : ['others'];
           // Preserve completion date if task is already done
           if (t.state === 'done' && t.completedAt && !task.completedAt) {
             updatedTask.completedAt = t.completedAt;

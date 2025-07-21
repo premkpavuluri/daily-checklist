@@ -37,7 +37,8 @@ const TagInput: React.FC<TagInputProps> = ({
   }, []);
 
   const filteredSuggestions = allAvailableTags.filter(
-    tag => tag.toLowerCase().includes(inputValue.toLowerCase()) && !value.includes(tag)
+    tag => tag.toLowerCase().includes(inputValue.toLowerCase()) && 
+    !value.some(existingTag => existingTag.toLowerCase() === tag.toLowerCase())
   );
 
   // Validate existing tags when value changes
@@ -76,28 +77,35 @@ const TagInput: React.FC<TagInputProps> = ({
   };
 
   const addTag = (tag: string) => {
+    // Convert tag to lowercase for consistency
+    const normalizedTag = tag.toLowerCase();
+    
     // Validate the tag
-    const validation = validateTagName(tag);
+    const validation = validateTagName(normalizedTag);
     if (!validation.isValid) {
       setValidationError(validation.error || 'Invalid tag name');
       return;
     }
 
-    // Check if tag already exists
-    if (value.includes(tag)) {
+    // Check if tag already exists (case-insensitive)
+    const tagExists = value.some(existingTag => 
+      existingTag.toLowerCase() === normalizedTag
+    );
+    
+    if (tagExists) {
       setValidationError('Tag already exists');
       return;
     }
 
     // Add to custom tags if it's not a default tag
     const defaultTags = ['work', 'personal', 'others'];
-    if (!defaultTags.includes(tag)) {
-      addCustomTag(tag);
+    if (!defaultTags.includes(normalizedTag)) {
+      addCustomTag(normalizedTag);
       // Force re-render to update suggestions
       setRefreshTrigger(prev => prev + 1);
     }
 
-    onChange([...value, tag]);
+    onChange([...value, normalizedTag]);
     setInputValue('');
     setShowSuggestions(false);
     setValidationError('');
@@ -108,7 +116,7 @@ const TagInput: React.FC<TagInputProps> = ({
   };
 
   const handleSuggestionClick = (suggestion: string) => {
-    addTag(suggestion);
+    addTag(suggestion.toLowerCase());
   };
 
   const handleInputFocus = () => {
