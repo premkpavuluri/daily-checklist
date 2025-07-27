@@ -4,6 +4,7 @@ import MatrixBoard from '../components/organisms/MatrixBoard';
 import Overview from '../components/organisms/Overview';
 import { Task, TaskState } from '../components/molecules/TaskCard';
 import Icon from '../components/atoms/Icon';
+import Footer from '../components/atoms/Footer';
 import ConfirmationDialog from '../components/molecules/ConfirmationDialog';
 import TagFilterDropdown from '../components/molecules/TagFilterDropdown';
 import SearchBar from '../components/molecules/SearchBar';
@@ -145,7 +146,7 @@ const EisenhowerMatrixApp = () => {
   const filteredTasks = filterTasksByTags(searchFilteredTasks, selectedTags, 'OR');
 
   return (
-    <div style={{ minHeight: '100vh', background: '#f6f8fa', padding: 0, position: 'relative' }}>
+    <div style={{ minHeight: '100vh', background: '#f6f8fa', padding: 0, position: 'relative', display: 'flex', flexDirection: 'column' }}>
       <div style={{ background: '#fff', padding: '32px 40px 16px 40px', boxShadow: '0 2px 8px #0001', borderBottom: '1px solid #ececec', position: 'relative' }}>
         <div style={{ position: 'absolute', top: 32, right: 40, zIndex: 10, display: 'flex', alignItems: 'center', gap: 12 }}>
           <SearchBar
@@ -212,7 +213,7 @@ const EisenhowerMatrixApp = () => {
         confirmText="Delete"
         cancelText="Cancel"
       />
-      <div style={{ padding: 24 }}>
+      <div style={{ padding: 24, flex: 1 }}>
         <MatrixBoard
           tasks={filteredTasks}
           onTaskStateChange={handleTaskStateChange}
@@ -221,6 +222,7 @@ const EisenhowerMatrixApp = () => {
         />
         <Overview tasks={filteredTasks} />
       </div>
+      <Footer />
     </div>
   );
 };

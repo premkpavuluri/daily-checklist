@@ -5,8 +5,7 @@
 - [ ] Add settings option
     - [ ] Option to change the questions
 - [ ] Save filter tags and persist even after refresh
-- [ ] Add footer
-    - [ ] copyrights, and github link for repo and other details.
+
 - [ ] Implement drag and drop between matrix quadrants
 - [ ] Add task priority indicators
 - [ ] Add task due date sorting
@@ -40,6 +39,8 @@
 
 
 ## Done
+- [x] Add footer
+    - [x] copyrights, and github link for repo and other details.
 - [x] Add task filtering options
 - [x] Add task search functionality
 - [x] Add task categories/tags
