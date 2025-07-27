@@ -11,6 +11,11 @@ const FILTER_TAGS_KEY = 'eisenhower-filter-tags';
  */
 export const loadTasks = (): Task[] => {
   try {
+    // Check if we're on the client side
+    if (typeof window === 'undefined') {
+      return [];
+    }
+    
     const data = localStorage.getItem(TASKS_KEY);
     const tasks = data ? JSON.parse(data) : [];
     
@@ -53,6 +58,11 @@ export const loadTasks = (): Task[] => {
  * @param tasks Array of tasks to save
  */
 export const saveTasks = (tasks: Task[]): void => {
+  // Check if we're on the client side
+  if (typeof window === 'undefined') {
+    return;
+  }
+  
   localStorage.setItem(TASKS_KEY, JSON.stringify(tasks));
 };
 
@@ -68,6 +78,11 @@ export const generateId = (): string => {
  * Clear all stored tasks
  */
 export const clearTasks = (): void => {
+  // Check if we're on the client side
+  if (typeof window === 'undefined') {
+    return;
+  }
+  
   localStorage.removeItem(TASKS_KEY);
 };
 
@@ -85,6 +100,11 @@ export const getTasksKey = (): string => {
  */
 export const loadFilterTags = (): string[] => {
   try {
+    // Check if we're on the client side
+    if (typeof window === 'undefined') {
+      return [];
+    }
+    
     const data = localStorage.getItem(FILTER_TAGS_KEY);
     return data ? JSON.parse(data) : [];
   } catch {
@@ -97,6 +117,11 @@ export const loadFilterTags = (): string[] => {
  * @param tags Array of filter tags to save
  */
 export const saveFilterTags = (tags: string[]): void => {
+  // Check if we're on the client side
+  if (typeof window === 'undefined') {
+    return;
+  }
+  
   localStorage.setItem(FILTER_TAGS_KEY, JSON.stringify(tags));
 };
 
@@ -104,6 +129,11 @@ export const saveFilterTags = (tags: string[]): void => {
  * Clear stored filter tags
  */
 export const clearFilterTags = (): void => {
+  // Check if we're on the client side
+  if (typeof window === 'undefined') {
+    return;
+  }
+  
   localStorage.removeItem(FILTER_TAGS_KEY);
 };
 

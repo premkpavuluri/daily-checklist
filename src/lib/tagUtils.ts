@@ -71,6 +71,11 @@ export const addCustomTag = (tag: string): void => {
  */
 export const loadCustomTags = (): string[] => {
   try {
+    // Check if we're on the client side
+    if (typeof window === 'undefined') {
+      return [];
+    }
+    
     const data = localStorage.getItem(CUSTOM_TAGS_KEY);
     
     if (data) {
@@ -90,6 +95,11 @@ export const loadCustomTags = (): string[] => {
  */
 export const saveCustomTags = (tags: string[]): void => {
   try {
+    // Check if we're on the client side
+    if (typeof window === 'undefined') {
+      return;
+    }
+    
     localStorage.setItem(CUSTOM_TAGS_KEY, JSON.stringify(tags));
   } catch (error) {
     console.error('Error saving custom tags to localStorage:', error);
