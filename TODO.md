@@ -4,8 +4,7 @@
 
 - [ ] Add settings option
     - [ ] Option to change the questions
-- [ ] Save filter tags and persist even after refresh
-
+- [x] Save filter tags and persist even after refresh
 - [ ] Implement drag and drop between matrix quadrants
 - [ ] Add task priority indicators
 - [ ] Add task due date sorting

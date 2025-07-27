@@ -8,7 +8,7 @@ import Footer from '../components/atoms/Footer';
 import ConfirmationDialog from '../components/molecules/ConfirmationDialog';
 import TagFilterDropdown from '../components/molecules/TagFilterDropdown';
 import SearchBar from '../components/molecules/SearchBar';
-import { loadTasks, saveTasks, generateId } from '../lib/persistence';
+import { loadTasks, saveTasks, generateId, loadFilterTags, saveFilterTags } from '../lib/persistence';
 import { getCurrentDateISO } from '../lib/dateUtils';
 import { getAllTags, getAllAvailableTags, getTagCounts, filterTasksByTags, cleanupUnusedCustomTags, cleanupDuplicateTags } from '../lib/tagUtils';
 import { searchTasksByText } from '../lib/searchUtils';
@@ -26,6 +26,9 @@ const EisenhowerMatrixApp = () => {
   useEffect(() => {
     const loadedTasks = loadTasks();
     setTasks(loadedTasks);
+    // Load saved filter tags
+    const savedFilterTags = loadFilterTags();
+    setSelectedTags(savedFilterTags);
     // Clean up duplicate tags first, then unused tags
     cleanupDuplicateTags();
     if (loadedTasks.length > 0) {
@@ -40,6 +43,11 @@ const EisenhowerMatrixApp = () => {
       cleanupUnusedCustomTags(tasks);
     }
   }, [tasks]);
+
+  // Save filter tags whenever they change
+  useEffect(() => {
+    saveFilterTags(selectedTags);
+  }, [selectedTags]);
 
   const handleAddTask = (task: TaskFormInput) => {
     setTasks(prev => {

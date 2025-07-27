@@ -1,8 +1,9 @@
 import { Task } from '../components/molecules/TaskCard';
 import { validateTagName } from './tagUtils';
 
-// Storage key for tasks
+// Storage keys
 const TASKS_KEY = 'eisenhower-tasks';
+const FILTER_TAGS_KEY = 'eisenhower-filter-tags';
 
 /**
  * Load tasks from localStorage
@@ -76,4 +77,40 @@ export const clearTasks = (): void => {
  */
 export const getTasksKey = (): string => {
   return TASKS_KEY;
+};
+
+/**
+ * Load filter tags from localStorage
+ * @returns Array of filter tags or empty array if no data or error
+ */
+export const loadFilterTags = (): string[] => {
+  try {
+    const data = localStorage.getItem(FILTER_TAGS_KEY);
+    return data ? JSON.parse(data) : [];
+  } catch {
+    return [];
+  }
+};
+
+/**
+ * Save filter tags to localStorage
+ * @param tags Array of filter tags to save
+ */
+export const saveFilterTags = (tags: string[]): void => {
+  localStorage.setItem(FILTER_TAGS_KEY, JSON.stringify(tags));
+};
+
+/**
+ * Clear stored filter tags
+ */
+export const clearFilterTags = (): void => {
+  localStorage.removeItem(FILTER_TAGS_KEY);
+};
+
+/**
+ * Get the storage key used for filter tags
+ * @returns The storage key string
+ */
+export const getFilterTagsKey = (): string => {
+  return FILTER_TAGS_KEY;
 }; 
