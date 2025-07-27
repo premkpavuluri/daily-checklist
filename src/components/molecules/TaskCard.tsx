@@ -3,6 +3,43 @@ import Icon from '../atoms/Icon';
 import { formatDate, isOverdue, formatCompletionDate } from '../../lib/dateUtils';
 import { getTagColor } from '../../lib/tagUtils';
 
+// Simple markup renderer for task descriptions
+const renderMarkup = (text: string): React.ReactNode => {
+  if (!text) return null;
+  
+  // Split by lines to handle line breaks
+  const lines = text.split('\n');
+  
+  return lines.map((line, lineIndex) => {
+    if (line.trim() === '') {
+      return <br key={lineIndex} />;
+    }
+    
+    // Handle bold text: **text**
+    let processedLine = line.replace(/\*\*(.*?)\*\*/g, '<strong style="font-weight: 600;">$1</strong>');
+    
+    // Handle italic text: *text*
+    processedLine = processedLine.replace(/\*(.*?)\*/g, '<em style="font-style: italic;">$1</em>');
+    
+    // Handle code: `code`
+    processedLine = processedLine.replace(/`(.*?)`/g, '<code style="background: #e2e8f0; padding: 1px 4px; border-radius: 3px; font-family: monospace; font-size: 11px;">$1</code>');
+    
+    // Handle links: [text](url)
+    processedLine = processedLine.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer" style="color: #2563eb; text-decoration: none;">$1</a>');
+    
+    return (
+      <span 
+        key={lineIndex}
+        dangerouslySetInnerHTML={{ __html: processedLine }}
+        style={{ 
+          display: 'block',
+          marginBottom: lineIndex < lines.length - 1 ? '4px' : '0'
+        }}
+      />
+    );
+  });
+};
+
 export type TaskState = 'created' | 'in-progress' | 'wip' | 'done';
 
 export interface Task {
@@ -73,8 +110,16 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, onStateChange, onEdit, onDele
       )}
       {/* Details (only if description exists and showDetails is true) */}
       {task.description && showDetails && (
-        <div style={{ background: '#f8fafc', borderRadius: 6, margin: '4px 8px', padding: '6px 8px', fontSize: 12, color: '#22223b' }}>
-          {task.description}
+        <div style={{ 
+          background: '#f8fafc', 
+          borderRadius: 6, 
+          margin: '4px 8px', 
+          padding: '8px 10px', 
+          fontSize: 12, 
+          color: '#22223b',
+          lineHeight: '1.4'
+        }}>
+          {renderMarkup(task.description)}
         </div>
       )}
       {/* Due date, time estimate, and tags */}
