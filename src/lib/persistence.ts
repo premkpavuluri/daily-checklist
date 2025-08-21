@@ -4,6 +4,7 @@ import { validateTagName } from './tagUtils';
 // Storage keys
 const TASKS_KEY = 'eisenhower-tasks';
 const FILTER_TAGS_KEY = 'eisenhower-filter-tags';
+const DONE_SORT_KEY = 'eisenhower-done-sort';
 
 /**
  * Load tasks from localStorage
@@ -143,4 +144,55 @@ export const clearFilterTags = (): void => {
  */
 export const getFilterTagsKey = (): string => {
   return FILTER_TAGS_KEY;
+};
+
+/**
+ * Load done lane sort preference from localStorage
+ * @returns Sort preference ('recent' or 'old') or 'recent' as default
+ */
+export const loadDoneSortPreference = (): 'recent' | 'old' => {
+  try {
+    // Check if we're on the client side
+    if (typeof window === 'undefined') {
+      return 'recent';
+    }
+    
+    const data = localStorage.getItem(DONE_SORT_KEY);
+    return data === 'old' ? 'old' : 'recent';
+  } catch {
+    return 'recent';
+  }
+};
+
+/**
+ * Save done lane sort preference to localStorage
+ * @param sortOrder Sort preference to save
+ */
+export const saveDoneSortPreference = (sortOrder: 'recent' | 'old'): void => {
+  // Check if we're on the client side
+  if (typeof window === 'undefined') {
+    return;
+  }
+  
+  localStorage.setItem(DONE_SORT_KEY, sortOrder);
+};
+
+/**
+ * Clear stored done lane sort preference
+ */
+export const clearDoneSortPreference = (): void => {
+  // Check if we're on the client side
+  if (typeof window === 'undefined') {
+    return;
+  }
+  
+  localStorage.removeItem(DONE_SORT_KEY);
+};
+
+/**
+ * Get the storage key used for done lane sort preference
+ * @returns The storage key string
+ */
+export const getDoneSortKey = (): string => {
+  return DONE_SORT_KEY;
 }; 
