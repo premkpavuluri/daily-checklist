@@ -37,6 +37,35 @@ const TaskForm: React.FC<TaskFormProps> = ({ onSubmit, open, onClose, initialVal
   const [tags, setTags] = useState<string[]>(initialValues?.tags || []);
   const [tagValidationError, setTagValidationError] = useState<string>('');
 
+  // Helper function to format time estimate for display
+  const formatTimeEstimate = (hours: string, minutes: string): string => {
+    if (hours === '0' && minutes === '0') return '';
+    
+    let result = '';
+    if (hours !== '0') {
+      result += `${hours} hr${hours === '1' ? '' : 's'}`;
+    }
+    if (minutes !== '0') {
+      if (result) result += ' ';
+      result += `${minutes} min${minutes === '1' ? '' : 's'}`;
+    }
+    return result;
+  };
+
+  // Helper function to parse time estimate for display
+  const parseTimeEstimate = (timeStr: string): { hours: string; minutes: string } => {
+    if (!timeStr) return { hours: '', minutes: '0' };
+    
+    // Handle both old format (hours/minutes) and new format (hr/min)
+    const hoursMatch = timeStr.match(/^(\d+)\s*(?:hours?|hrs?)/);
+    const minutesMatch = timeStr.match(/(\d+)\s*(?:minutes?|mins?)/);
+    
+    return {
+      hours: hoursMatch ? hoursMatch[1] : '0',
+      minutes: minutesMatch ? minutesMatch[1] : '0'
+    };
+  };
+
   React.useEffect(() => {
     if (open && initialValues) {
       setTitle(initialValues.title || '');
@@ -104,7 +133,7 @@ const TaskForm: React.FC<TaskFormProps> = ({ onSubmit, open, onClose, initialVal
       important, 
       urgent, 
       deadline: deadline ? parseDateFromInput(deadline) : undefined, 
-      timeEstimate,
+      timeEstimate: timeEstimate || undefined,
       tags
     });
     setTitle('');
@@ -305,30 +334,116 @@ const TaskForm: React.FC<TaskFormProps> = ({ onSubmit, open, onClose, initialVal
                 </div>
                 <div>
                   <label style={{ display: 'block', fontWeight: 500, marginBottom: 6, fontSize: 14 }}>Time Estimate</label>
-                  <select
-                    value={timeEstimate}
-                    onChange={e => setTimeEstimate(e.target.value)}
-                    style={{
-                      width: '100%',
-                      border: '1.5px solid #e5e7eb',
-                      borderRadius: 8,
-                      padding: '10px 12px',
-                      fontSize: 14,
-                      fontFamily: 'inherit',
-                      background: '#f8fafc',
-                      color: '#22223b',
-                      outline: 'none',
-                      boxSizing: 'border-box',
-                      boxShadow: '0 1px 2px #0001',
-                      marginBottom: 0,
-                    }}
-                  >
-                    <option value="">Select estimate...</option>
-                    <option value="15 minutes">15 minutes</option>
-                    <option value="30 minutes">30 minutes</option>
-                    <option value="1 hour">1 hour</option>
-                    <option value="2 hours">2 hours</option>
-                  </select>
+                  <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                    <div style={{ flex: 1 }}>
+                      <input
+                        type="number"
+                        min="0"
+                        max="99"
+                        placeholder="0"
+                        value={parseTimeEstimate(timeEstimate).hours}
+                        onChange={e => {
+                          const hours = e.target.value;
+                          const minutes = parseTimeEstimate(timeEstimate).minutes;
+                          if (hours === '') {
+                            setTimeEstimate('');
+                          } else if (hours === '0' && minutes === '0') {
+                            setTimeEstimate('');
+                          } else {
+                            setTimeEstimate(formatTimeEstimate(hours, minutes));
+                          }
+                        }}
+                        style={{
+                          width: '100%',
+                          border: '1.5px solid #e5e7eb',
+                          borderRadius: 8,
+                          padding: '8px 10px',
+                          fontSize: 13,
+                          fontFamily: 'inherit',
+                          background: timeEstimate ? '#f8fafc' : '#fef3c7',
+                          color: '#22223b',
+                          outline: 'none',
+                          boxSizing: 'border-box',
+                          boxShadow: '0 1px 2px #0001',
+                          textAlign: 'center'
+                        }}
+                      />
+                      <div style={{ fontSize: 10, color: '#6b7280', textAlign: 'center', marginTop: 2 }}>Hours</div>
+                    </div>
+                    <div style={{ fontSize: 18, color: '#6b7280', fontWeight: 600, display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', minHeight: '40px', marginBottom: '12px' }}>:</div>
+                    <div style={{ flex: 1 }}>
+                      <input
+                        type="number"
+                        min="0"
+                        max="59"
+                        placeholder="0"
+                        value={parseTimeEstimate(timeEstimate).minutes}
+                        onChange={e => {
+                          const minutes = e.target.value;
+                          const hours = parseTimeEstimate(timeEstimate).hours;
+                          if (hours === '0' && minutes === '0') {
+                            setTimeEstimate('');
+                          } else {
+                            setTimeEstimate(formatTimeEstimate(hours, minutes));
+                          }
+                        }}
+                        style={{
+                          width: '100%',
+                          border: '1.5px solid #e5e7eb',
+                          borderRadius: 8,
+                          padding: '8px 10px',
+                          fontSize: 13,
+                          fontFamily: 'inherit',
+                          background: timeEstimate ? '#f8fafc' : '#fef3c7',
+                          color: '#22223b',
+                          outline: 'none',
+                          boxSizing: 'border-box',
+                          boxShadow: '0 1px 2px #0001',
+                          textAlign: 'center'
+                        }}
+                      />
+                      <div style={{ fontSize: 10, color: '#6b7280', textAlign: 'center', marginTop: 2 }}>Minutes</div>
+                    </div>
+                  </div>
+                  {/* Quick preset buttons */}
+                  <div style={{ display: 'flex', gap: 6, marginTop: 8, flexWrap: 'wrap' }}>
+                    {['15m', '30m', '1h', '2h', '4h'].map(preset => (
+                      <button
+                        key={preset}
+                        type="button"
+                        onClick={() => {
+                          if (preset.endsWith('m')) {
+                            const minutes = preset.slice(0, -1);
+                            setTimeEstimate(formatTimeEstimate('0', minutes));
+                          } else {
+                            const hours = preset.slice(0, -1);
+                            setTimeEstimate(formatTimeEstimate(hours, '0'));
+                          }
+                        }}
+                        style={{
+                          background: '#f3f4f6',
+                          border: '1px solid #d1d5db',
+                          borderRadius: '6px',
+                          padding: '4px 8px',
+                          fontSize: '11px',
+                          color: '#374151',
+                          cursor: 'pointer',
+                          transition: 'all 0.15s',
+                          fontWeight: '500'
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.background = '#e5e7eb';
+                          e.currentTarget.style.borderColor = '#9ca3af';
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.background = '#f3f4f6';
+                          e.currentTarget.style.borderColor = '#d1d5db';
+                        }}
+                      >
+                        {preset}
+                      </button>
+                    ))}
+                  </div>
                 </div>
               </div>
             )}
