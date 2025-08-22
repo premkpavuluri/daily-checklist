@@ -126,7 +126,7 @@ const MatrixLane: React.FC<MatrixLaneProps> = ({ quadrant, tasks, onTaskStateCha
             {quadrant === 'done' ? 'No completed tasks yet' : 'No active tasks'}
           </div>
         ) : (
-          sortedTasks.map((task, index) => (
+          sortedTasks.map((task) => (
             <TaskCard
               key={task.id}
               task={task}
